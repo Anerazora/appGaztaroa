@@ -3,16 +3,18 @@ import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from '@rneui/themed';
 import { EXCURSIONES } from '../comun/excursiones';
 import { COMENTARIOS } from '../comun/comentarios';
+import { baseUrl } from '../comun/comun';
 
 function RenderExcursion(props) {
 
     const excursion = props.excursion;
 
     if (excursion != null) {
+        
         return (
             <Card>
                 <Card.Divider />
-                <Card.Image source={require('./imagenes/40Años.png')}>
+                <Card.Image source={{uri: baseUrl + excursion.imagen}}>
                     <Card.Title style={inLine.cardTitleStyle}>{excursion.nombre}</Card.Title>
                 </Card.Image>
                 <Text style={{ margin: 20 }}>
@@ -102,7 +104,7 @@ class DetalleExcursion extends Component {
 
 const inLine = StyleSheet.create({
     cardTitleStyle: {
-        color: 'chocolate',
+        color: 'white',
         fontWeight: 'bold',
         fontSize: 30,
         alignItems: 'center',
