@@ -3,26 +3,32 @@ import { StyleSheet, Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from '@rneui/themed';
 import { baseUrl } from '../comun/comun';
 import { connect } from 'react-redux';
+import { postFavorito } from '../redux/ActionCreators';
 
 const mapStateToProps = state => {
     return {
         actividades: state.actividades,
         excursiones: state.excursiones,
         cabeceras: state.cabeceras,
-        comentarios: state.comentarios
+        comentarios: state.comentarios,
+        favoritos: state.favoritos
     }
 }
+
+const mapDispatchToProps = dispatch => ({
+    postFavorito: (excursionId) => dispatch(postFavorito(excursionId))
+})
 
 function RenderExcursion(props) {
 
     const excursion = props.excursion;
 
     if (excursion != null) {
-        
+
         return (
             <Card>
                 <Card.Divider />
-                <Card.Image source={{uri: baseUrl + excursion.imagen}}>
+                <Card.Image source={{ uri: baseUrl + excursion.imagen }}>
                     <Card.Title style={inLine.cardTitleStyle}>{excursion.nombre}</Card.Title>
                 </Card.Image>
                 <Text style={{ margin: 20 }}>
@@ -31,7 +37,7 @@ function RenderExcursion(props) {
                 <Icon
                     raised
                     reverse
-                    name={ props.favorita ? 'heart' : 'heart-o'}
+                    name={props.favorita ? 'heart' : 'heart-o'}
                     type='font-awesome'
                     color='#f50'
                     onPress={() => props.favorita ? console.log('La excursión ya se encuentra entre las favoritas') : props.onPress()}
@@ -48,13 +54,13 @@ function RenderComentario(props) {
 
     const comentarios = props.comentarios;
 
-    const renderCommentarioItem = ({item, index}) => {
+    const renderCommentarioItem = ({ item, index }) => {
 
         return (
-            <View key={index} style={{margin: 10}}>
-                <Text style={{fontSize: 14}}>{item.comentario}</Text>
-                <Text style={{fontSize: 14}}>{item.valoracion} Valoracion</Text>
-                <Text style={{fontSize: 14}}>{'-- ' + item.autor + ', ' + item.dia} </Text>
+            <View key={index} style={{ margin: 10 }}>
+                <Text style={{ fontSize: 14 }}>{item.comentario}</Text>
+                <Text style={{ fontSize: 14 }}>{item.valoracion} Valoracion</Text>
+                <Text style={{ fontSize: 14 }}>{'-- ' + item.autor + ', ' + item.dia} </Text>
             </View>
         );
     };
@@ -74,20 +80,9 @@ function RenderComentario(props) {
 
 
 class DetalleExcursion extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            autor: '',
-            comentario: '',
-            puntuacion: 3,
-            showModal: false,
-            image: '',
-            favoritos: []
-        };
-    }
 
     marcarFavorito(excursionId) {
-        this.setState({favoritos: this.state.favoritos.concat(excursionId)});
+        this.props.postFavorito(excursionId);
     }
 
     render() {
@@ -96,7 +91,7 @@ class DetalleExcursion extends Component {
             <ScrollView>
                 <RenderExcursion
                     excursion={this.props.excursiones.excursiones[+excursionId]}
-                    favorita={this.state.favoritos.some(el => el === excursionId)}
+                    favorita={this.props.favoritos.favoritos.some(el => el === excursionId)}
                     onPress={() => this.marcarFavorito(excursionId)}
                 />
                 <RenderComentario
@@ -119,4 +114,4 @@ const inLine = StyleSheet.create({
     },
 });
 
-export default connect(mapStateToProps)(DetalleExcursion);
+export default connect(mapStateToProps, mapDispatchToProps)(DetalleExcursion);

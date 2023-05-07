@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import { Text, ScrollView } from 'react-native';
 import { Card } from '@rneui/themed';
 import { ListItem, Avatar } from '@rneui/themed';
-import { SafeAreaView,FlatList } from 'react-native';
+import { SafeAreaView, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { baseUrl } from '../comun/comun';
+import { IndicadorActividad } from './IndicadorActividadComponent';
 
 const mapStateToProps = state => {
     return {
-      actividades: state.actividades
+        actividades: state.actividades
     }
-  }
+}
 
 function Historia() {
 
@@ -31,23 +32,51 @@ function Historia() {
 
 class QuienesSomos extends Component {
 
-  
+
 
     render() {
 
         const renderActividadItem = ({ item, index }) => {
 
-            return (
+            if (this.props.errMess) {
+                console.log({ errMess });
+                return (
+                    <ScrollView>
+                        <Historia />
+                        <Text>{this.props.errMess}</Text>
+                    </ScrollView>
 
-                <ListItem
-                    key={index}
-                    bottomDivider>
-                    <Avatar source={{uri:baseUrl + item.imagen}} />
-                    <ListItem.Content>
-                        <ListItem.Title>{item.nombre}</ListItem.Title>
-                        <ListItem.Subtitle>{item.descripcion}</ListItem.Subtitle>
-                    </ListItem.Content>
-                </ListItem>);
+                );
+            }
+
+            if (this.props.isLoading) {
+                return (
+                    <ScrollView>
+                        <Historia />
+                        <Card>
+                            <Card.Title>"Actividades y recursos"</Card.Title>
+                            <Card.Divider />
+                            <IndicadorActividad />
+                        </Card>
+                    </ScrollView>
+                );
+            }
+
+            else {
+
+                return (
+
+                    <ListItem
+                        key={index}
+                        bottomDivider>
+                        <Avatar source={{ uri: baseUrl + item.imagen }} />
+                        <ListItem.Content>
+                            <ListItem.Title>{item.nombre}</ListItem.Title>
+                            <ListItem.Subtitle>{item.descripcion}</ListItem.Subtitle>
+                        </ListItem.Content>
+                    </ListItem>);
+
+            }
         };
 
         return (
@@ -57,11 +86,13 @@ class QuienesSomos extends Component {
                     <Card.Title>"Actividades y recursos"</Card.Title>
                     <Card.Divider />
                     <SafeAreaView>
-                    <FlatList scrollEnabled={false}
-                        data={this.props.actividades.actividades}
-                        renderItem={renderActividadItem}
-                        keyExtractor={item => item.id.toString()}
-                    />
+                        <FlatList scrollEnabled={false}
+                            data={this.props.actividades.actividades}
+                            renderItem={renderActividadItem}
+                            keyExtractor={item => item.id.toString()}
+                            errMess={this.props.actividades.errMess}
+                            isLoading={this.props.actividades.isLoading}
+                        />
                     </SafeAreaView>
                 </Card>
             </ScrollView>
