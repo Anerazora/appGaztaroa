@@ -43,7 +43,7 @@ function CalendarioNavegador({ navigation }) {
       screenOptions={{
         headerTintColor: '#fff',
         headerStyle: { backgroundColor: colorGaztaroaOscuro },
-        headerTitleStyle: { color: '#fff' },
+        headerTitleStyle: { color: '#fff' }
       }}
     >
       <Stack.Screen
@@ -51,6 +51,7 @@ function CalendarioNavegador({ navigation }) {
         component={Calendario}
         options={{
           title: 'Calendario Gaztaroa',
+          headerLeft: () => (<Icon name="menu" size={28} color='white' onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />),
         }}
       />
       <Stack.Screen
