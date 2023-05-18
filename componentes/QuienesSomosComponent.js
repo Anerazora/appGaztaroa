@@ -69,7 +69,7 @@ class QuienesSomos extends Component {
                     <ListItem
                         key={index}
                         bottomDivider>
-                        <Avatar source={{ uri: baseUrl + item.imagen }} />
+                        <Avatar source={{ uri: item.imagen }} />
                         <ListItem.Content>
                             <ListItem.Title>{item.nombre}</ListItem.Title>
                             <ListItem.Subtitle>{item.descripcion}</ListItem.Subtitle>

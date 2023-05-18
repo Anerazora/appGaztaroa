@@ -1,6 +1,9 @@
 import * as ActionTypes from './ActionTypes';
 import { baseUrl } from '../comun/comun';
-
+import app from '../firebaseConfig';
+import 'firebase/database';
+import { getDatabase, ref, onValue } from "firebase/database";
+const database = getDatabase(app);
 export const fetchComentarios = () => (dispatch) => {
     return fetch(baseUrl + 'comentarios')
         .then(response => {
@@ -31,29 +34,42 @@ export const addComentarios = (comentarios) => ({
     payload: comentarios
 });
 
+// export const fetchExcursiones = () => (dispatch) => {
+
+//     dispatch(excursionesLoading());
+
+//     return fetch(baseUrl + 'excursiones')
+//         .then(response => {
+//             if (response.ok) {
+//                 return response;
+//             } else {
+//                 var error = new Error('Error ' + response.status + ': ' + response.statusText);
+//                 error.response = response;
+//                 throw error;
+//             }
+//         },
+//             error => {
+//                 var errmess = new Error(error.message);
+//                 throw errmess;
+//             })
+//         .then(response => response.json())
+//         .then(excursiones => dispatch(addExcursiones(excursiones)))
+//         .catch(error => dispatch(excursionesFailed(error.message)));
+// };
 export const fetchExcursiones = () => (dispatch) => {
 
     dispatch(excursionesLoading());
+     
+    const excursionesRef = ref(database, "excursiones");
 
-    return fetch(baseUrl + 'excursiones')
-        .then(response => {
-            if (response.ok) {
-                return response;
-            } else {
-                var error = new Error('Error ' + response.status + ': ' + response.statusText);
-                error.response = response;
-                throw error;
-            }
-        },
-            error => {
-                var errmess = new Error(error.message);
-                throw errmess;
-            })
-        .then(response => response.json())
-        .then(excursiones => dispatch(addExcursiones(excursiones)))
-        .catch(error => dispatch(excursionesFailed(error.message)));
+    // Suscribirse a los cambios de los datos en tiempo real
+    onValue(excursionesRef, (snapshot) => {
+    const excursiones = snapshot.val();
+    dispatch(addExcursiones(excursiones));
+    }, (error) => {
+    dispatch(excursionesFailed(error.message));
+    });
 };
-
 export const excursionesLoading = () => ({
     type: ActionTypes.EXCURSIONES_LOADING
 });
@@ -68,29 +84,42 @@ export const addExcursiones = (excursiones) => ({
     payload: excursiones
 });
 
+// export const fetchCabeceras = () => (dispatch) => {
+
+//     dispatch(cabecerasLoading());
+
+//     return fetch(baseUrl + 'cabeceras')
+//         .then(response => {
+//             if (response.ok) {
+//                 return response;
+//             } else {
+//                 var error = new Error('Error ' + response.status + ': ' + response.statusText);
+//                 error.response = response;
+//                 throw error;
+//             }
+//         },
+//             error => {
+//                 var errmess = new Error(error.message);
+//                 throw errmess;
+//             })
+//         .then(response => response.json())
+//         .then(cabeceras => dispatch(addCabeceras(cabeceras)))
+//         .catch(error => dispatch(cabecerasFailed(error.message)));
+// };
 export const fetchCabeceras = () => (dispatch) => {
 
     dispatch(cabecerasLoading());
+     
+    const cabecerasRef = ref(database, "cabeceras");
 
-    return fetch(baseUrl + 'cabeceras')
-        .then(response => {
-            if (response.ok) {
-                return response;
-            } else {
-                var error = new Error('Error ' + response.status + ': ' + response.statusText);
-                error.response = response;
-                throw error;
-            }
-        },
-            error => {
-                var errmess = new Error(error.message);
-                throw errmess;
-            })
-        .then(response => response.json())
-        .then(cabeceras => dispatch(addCabeceras(cabeceras)))
-        .catch(error => dispatch(cabecerasFailed(error.message)));
+    // Suscribirse a los cambios de los datos en tiempo real
+    onValue(cabecerasRef, (snapshot) => {
+    const cabeceras = snapshot.val();
+    dispatch(addCabeceras(cabeceras));
+    }, (error) => {
+    dispatch(cabecerasFailed(error.message));
+    });
 };
-
 export const cabecerasLoading = () => ({
     type: ActionTypes.CABECERAS_LOADING
 });
@@ -105,29 +134,42 @@ export const addCabeceras = (cabeceras) => ({
     payload: cabeceras
 });
 
+// export const fetchActividades = () => (dispatch) => {
+
+//     dispatch(actividadesLoading());
+
+//     return fetch(baseUrl + 'actividades')
+//         .then(response => {
+//             if (response.ok) {
+//                 return response;
+//             } else {
+//                 var error = new Error('Error ' + response.status + ': ' + response.statusText);
+//                 error.response = response;
+//                 throw error;
+//             }
+//         },
+//             error => {
+//                 var errmess = new Error(error.message);
+//                 throw errmess;
+//             })
+//         .then(response => response.json())
+//         .then(actividades => dispatch(addActividades(actividades)))
+//         .catch(error => dispatch(actividadesFailed(error.message)));
+// };
 export const fetchActividades = () => (dispatch) => {
 
     dispatch(actividadesLoading());
+     
+    const actividadesRef = ref(database, "actividades");
 
-    return fetch(baseUrl + 'actividades')
-        .then(response => {
-            if (response.ok) {
-                return response;
-            } else {
-                var error = new Error('Error ' + response.status + ': ' + response.statusText);
-                error.response = response;
-                throw error;
-            }
-        },
-            error => {
-                var errmess = new Error(error.message);
-                throw errmess;
-            })
-        .then(response => response.json())
-        .then(actividades => dispatch(addActividades(actividades)))
-        .catch(error => dispatch(actividadesFailed(error.message)));
+    // Suscribirse a los cambios de los datos en tiempo real
+    onValue(actividadesRef, (snapshot) => {
+    const actividades = snapshot.val();
+    dispatch(addActividades(actividades));
+    }, (error) => {
+    dispatch(actividadesFailed(error.message));
+    });
 };
-
 export const actividadesLoading = () => ({
     type: ActionTypes.ACTIVIDADES_LOADING
 });
