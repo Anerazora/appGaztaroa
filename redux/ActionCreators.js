@@ -1,8 +1,7 @@
 import * as ActionTypes from './ActionTypes';
-import { baseUrl } from '../comun/comun';
 import app from '../firebaseConfig';
 import 'firebase/database';
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, push, get} from "firebase/database";
 const database = getDatabase(app);
 // export const fetchComentarios = () => (dispatch) => {
 //     return fetch(baseUrl + 'comentarios')
@@ -206,21 +205,57 @@ export const addFavorito = (excursionId) => ({
     payload: excursionId
 });
 
-export const postComentario = (excursionId, valoracion, autor, comentario) => (dispatch) => {
-    let dia = new Date().toString();
-    setTimeout(() => {
-        dispatch(addComentario(excursionId, valoracion, autor, comentario, dia));
-    }, 2000);
+// export const postComentario = (excursionId, valoracion, autor, comentario) => (dispatch) => {
+//     let dia = new Date().toString();
+//     setTimeout(() => {
+//         dispatch(addComentario(excursionId, valoracion, autor, comentario, dia));
+//     }, 2000);
+// };
+export const postComentario = (comentario) => (dispatch) => {
+    const comentariosRef = ref(database, "comentarios");
+    console.log(comentario);
+    get(comentariosRef).then((snapshot) => {
+      const longitud = snapshot.numChildren();
+      //const longitud = Object.keys(snapshot.val()).length;
+      console.log(numChildren)
+      const comentarioConId = { ...comentario, id: longitud };
+      console.log(comentarioConId);
+      push(comentariosRef, comentarioConId)
+    
+        .then(() => {
+          dispatch(addComentario(comentarioConId));
+        })
+        .catch((error) => {
+          dispatch(comentariosFailed(error.message));
+        });
+    }).catch((error) => {
+        console.log(error)
+    });;
 };
 
-export const addComentario = (excursionId, valoracion, autor, comentario, dia) => ({
+
+    // try {
+    //   const comentariosRef1 = ref(database, "comentarios"); // Obtiene la referencia a la ubicación 'comentarios' en Realtime Database
+    //   onValue(comentariosRef1, (snapshot) => {
+    //     const id = snapshot.numChildren(); // Obtener la longitud de los comentarios existentes
+    //     comentariosFailed.log(id)
+    //     const comentarioConId = { ...comentario, id }; // Agregar el campo "id" al comentario
+  
+    //     push(comentariosRef1, comentarioConId);
+    //     dispatch(addComentario(comentarioConId));
+    //   });
+    // } catch (error) {
+    //   dispatch(comentariosFailed(error.message)); // Dispatch una acción en caso de error
+    // }
+
+export const addComentario = ( comentario) => ({
     type: ActionTypes.ADD_COMENTARIO,
-    payload: {
-        id: 30,
-        excursionId: excursionId,
-        valoracion: valoracion,
-        comentario: comentario,
-        autor: autor,
-        dia: dia
-    },
+    payload: comentario,
+    //  {
+    //     excursionId: excursionId,
+    //     valoracion: valoracion,
+    //     comentario: comentario,
+    //     autor: autor,
+    //     dia: dia
+    // },
 });

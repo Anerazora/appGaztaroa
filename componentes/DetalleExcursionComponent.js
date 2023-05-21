@@ -19,7 +19,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
     postFavorito: (excursionId) => dispatch(postFavorito(excursionId)),
-    postComentario: (excursionId, valoracion, autor, comentario) => dispatch(postComentario(excursionId, valoracion, autor, comentario))
+    postComentario: (comentario) => dispatch(postComentario(comentario))
 })
 
 function RenderExcursion(props) {
@@ -120,8 +120,16 @@ class DetalleExcursion extends Component {
     }
 
     gestionarComentario(excursionId) {
-        console.log(this.state);
-        this.props.postComentario(excursionId, this.state.valoracion, this.state.autor, this.state.comentario);
+        this.props.postComentario({
+            excursionId : excursionId,
+            valoracion: this.state.valoracion,
+            autor: this.state.autor,
+            comentario: this.state.comentario,
+            dia : (new Date()).toISOString()
+        });
+        // console.log(this.state);
+        // console.log(excursionId)
+        // this.props.postComentario(excursionId, this.state.valoracion, this.state.autor, this.state.comentario);
         this.resetForm();
     }
 
@@ -162,7 +170,7 @@ class DetalleExcursion extends Component {
                             ratingCount={5}
                             imageSize={30}
                             jumpValue={1}
-                            onFinishRating={value => this.setState({ puntuacion: value })}
+                            onFinishRating={value => this.setState({ valoracion: value })}
                             style={{ paddingVertical: 40 }}
                             defaultRating={3}
                         />
