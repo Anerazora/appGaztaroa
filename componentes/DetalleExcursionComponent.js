@@ -37,9 +37,9 @@ function RenderExcursion(props) {
                 <Text style={{ margin: 20 }}>
                     {excursion.descripcion}
                 </Text>
-                <View style={styles.formRow}>
+                <View style={styles.icon}>
                     <Icon
-                        raised
+                        //raised
                         reverse
                         name={props.favorita ? 'heart' : 'heart-o'}
                         type='font-awesome'
@@ -48,7 +48,7 @@ function RenderExcursion(props) {
                     />
 
                     <Icon
-                        raised
+                        //raised
                         reverse
                         name='pencil'
                         type='font-awesome'
@@ -73,7 +73,7 @@ function RenderComentario(props) {
         return (
             <View key={index} style={{ margin: 10 }}>
                 <Text style={{ fontSize: 14 }}>{item.comentario}</Text>
-                <Text style={{ fontSize: 14 }}>{item.valoracion} Valoracion</Text>
+                <Text style={{ fontSize: 14 }}>{item.valoracion} Estrellas</Text>
                 <Text style={{ fontSize: 14 }}>{'-- ' + item.autor + ', ' + item.dia} </Text>
             </View>
         );
@@ -131,7 +131,9 @@ class DetalleExcursion extends Component {
 
     render() {
         const { excursionId } = this.props.route.params;
-
+        const comentarios = Object.keys(this.props.comentarios.comentarios)
+        .map(key => this.props.comentarios.comentarios[key])
+        .filter(comment => comment.excursionId == excursionId)
         return (
             <ScrollView>
                 <RenderExcursion
@@ -141,7 +143,7 @@ class DetalleExcursion extends Component {
                     onPressComentario={() => this.toggleModal()}
                 />
                 <RenderComentario
-                    comentarios={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
+                    comentarios={comentarios}
                 />
 
                 <Modal
@@ -150,10 +152,16 @@ class DetalleExcursion extends Component {
                     visible={this.state.showModal}
                     onDismiss={() => { this.toggleModal(); this.resetForm(); }}
                     onRequestClose={() => { this.toggleModal(); this.resetForm(); }}>
-                    <View style={styles.modal}>
+                    <View style={styles.vista}>
 
                         <Rating
                             showRating
+                            type = 'star'
+                            ratingColor='#3498db'
+                            ratingBackgroundColor='#c8c7c8'
+                            ratingCount={5}
+                            imageSize={30}
+                            jumpValue={1}
                             onFinishRating={value => this.setState({ puntuacion: value })}
                             style={{ paddingVertical: 40 }}
                             defaultRating={3}
@@ -182,13 +190,13 @@ class DetalleExcursion extends Component {
                                 />
                             }
                         />
-                        <Button style={styles.formRow}
+                        <Button style={styles.botonModal}
                             onPress={() => { this.gestionarComentario(excursionId) }}
                             title="ENVIAR"
                             color={colorGaztaroaOscuro}
                             accessibilityLabel=""
                         />
-                        <Button style={styles.formRow}
+                        <Button style={styles.botonModal}
                             onPress={() => { this.toggleModal(); this.resetForm(); }}
                             color={colorGaztaroaOscuro}
                             title="CANCELAR"
@@ -209,6 +217,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 10,
+    },
+    botonModal: {
+        alignSelf: 'center',
+        backgroundColor: '#272727',
+        padding: '2%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    },
+    vista: {
+        paddingTop: 100,
+        paddingLeft: 30, 
+        paddingRight: 30,
+    }, 
+    icon: {
+        flexDirection: 'row', 
+        alingItems: 'center', 
+        justifyContent: 'center'
     },
 });
 
