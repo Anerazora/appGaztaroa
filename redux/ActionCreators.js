@@ -215,11 +215,11 @@ export const postComentario = (comentario) => (dispatch) => {
     const comentariosRef = ref(database, "comentarios");
     console.log(comentario);
     get(comentariosRef).then((snapshot) => {
-      const longitud = snapshot.numChildren();
-      //const longitud = Object.keys(snapshot.val()).length;
-      console.log(numChildren)
+
+      const longitud = Object.keys(snapshot.val()).length;
+      //console.log(longitud)
       const comentarioConId = { ...comentario, id: longitud };
-      console.log(comentarioConId);
+    //   console.log(comentarioConId);
       push(comentariosRef, comentarioConId)
     
         .then(() => {
