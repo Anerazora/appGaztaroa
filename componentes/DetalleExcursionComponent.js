@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, FlatList, Modal, Button } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, FlatList, Modal, Button, Pressable } from 'react-native';
 import { Card, Icon, Input } from '@rneui/themed';
 import { Rating } from 'react-native-ratings';
 import { baseUrl } from '../comun/comun';
@@ -19,7 +19,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
     postFavorito: (excursionId) => dispatch(postFavorito(excursionId)),
-    postComentario: (excursionId, valoracion, autor, comentario) => dispatch(postComentario(excursionId, valoracion, autor, comentario))
+    postComentario: (comentario) => dispatch(postComentario(comentario))
 })
 
 function RenderExcursion(props) {
@@ -31,15 +31,15 @@ function RenderExcursion(props) {
         return (
             <Card>
                 <Card.Divider />
-                <Card.Image source={{ uri: baseUrl + excursion.imagen }}>
+                <Card.Image source={{ uri:  excursion.imagen }}>
                     <Card.Title style={styles.cardTitleStyle}>{excursion.nombre}</Card.Title>
                 </Card.Image>
                 <Text style={{ margin: 20 }}>
                     {excursion.descripcion}
                 </Text>
-                <View style={styles.formRow}>
+                <View style={styles.icon}>
                     <Icon
-                        raised
+                        //raised
                         reverse
                         name={props.favorita ? 'heart' : 'heart-o'}
                         type='font-awesome'
@@ -48,13 +48,18 @@ function RenderExcursion(props) {
                     />
 
                     <Icon
-                        raised
+                        //raised
                         reverse
                         name='pencil'
                         type='font-awesome'
                         color={colorGaztaroaOscuro}
                         onPress={() => props.onPressComentario()}
                     />
+                    <Pressable style={styles.botonApuntate}
+                     onPress={() => props.onPressApuntate()}
+                    >
+                        <Text>Apúntate a la excursión!</Text>
+                    </Pressable>
                 </View>
             </Card>
         );
@@ -73,7 +78,7 @@ function RenderComentario(props) {
         return (
             <View key={index} style={{ margin: 10 }}>
                 <Text style={{ fontSize: 14 }}>{item.comentario}</Text>
-                <Text style={{ fontSize: 14 }}>{item.valoracion} Valoracion</Text>
+                <Text style={{ fontSize: 14 }}>{item.valoracion} Estrellas</Text>
                 <Text style={{ fontSize: 14 }}>{'-- ' + item.autor + ', ' + item.dia} </Text>
             </View>
         );
@@ -101,14 +106,22 @@ class DetalleExcursion extends Component {
             valoracion: 3,
             autor: '',
             comentario: '',
-            showModal: false
+            showModal: false,
+            showModal2: false,
         }
     }
 
     toggleModal() {
         this.setState({ showModal: !this.state.showModal });
     }
-
+    toggleModal2(){
+        this.setState({ showModal2: !this.state.showModal2 });
+    }
+    resetModal2(){
+        this.setState({
+            showModal2: false,
+        })
+    }
     resetForm() {
         this.setState({
             valoracion: 3,
@@ -120,8 +133,16 @@ class DetalleExcursion extends Component {
     }
 
     gestionarComentario(excursionId) {
-        console.log(this.state);
-        this.props.postComentario(excursionId, this.state.valoracion, this.state.autor, this.state.comentario);
+        this.props.postComentario({
+            excursionId : excursionId,
+            valoracion: this.state.valoracion,
+            autor: this.state.autor,
+            comentario: this.state.comentario,
+            dia : (new Date()).toISOString()
+        });
+        // console.log(this.state);
+        // console.log(excursionId)
+        // this.props.postComentario(excursionId, this.state.valoracion, this.state.autor, this.state.comentario);
         this.resetForm();
     }
 
@@ -131,7 +152,9 @@ class DetalleExcursion extends Component {
 
     render() {
         const { excursionId } = this.props.route.params;
-
+        const comentarios = Object.keys(this.props.comentarios.comentarios)
+        .map(key => this.props.comentarios.comentarios[key])
+        .filter(comment => comment.excursionId == excursionId)
         return (
             <ScrollView>
                 <RenderExcursion
@@ -139,9 +162,10 @@ class DetalleExcursion extends Component {
                     favorita={this.props.favoritos.favoritos.some(el => el === excursionId)}
                     onPress={() => this.marcarFavorito(excursionId)}
                     onPressComentario={() => this.toggleModal()}
+                    onPressApuntate = { () => this.toggleModal2()}
                 />
                 <RenderComentario
-                    comentarios={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
+                    comentarios={comentarios}
                 />
 
                 <Modal
@@ -150,11 +174,17 @@ class DetalleExcursion extends Component {
                     visible={this.state.showModal}
                     onDismiss={() => { this.toggleModal(); this.resetForm(); }}
                     onRequestClose={() => { this.toggleModal(); this.resetForm(); }}>
-                    <View style={styles.modal}>
+                    <View style={styles.vista}>
 
                         <Rating
                             showRating
-                            onFinishRating={value => this.setState({ puntuacion: value })}
+                            type = 'star'
+                            ratingColor='#3498db'
+                            ratingBackgroundColor='#c8c7c8'
+                            ratingCount={5}
+                            imageSize={30}
+                            jumpValue={1}
+                            onFinishRating={value => this.setState({ valoracion: value })}
                             style={{ paddingVertical: 40 }}
                             defaultRating={3}
                         />
@@ -182,17 +212,44 @@ class DetalleExcursion extends Component {
                                 />
                             }
                         />
-                        <Button style={styles.formRow}
+                        <Button style={styles.botonModal}
                             onPress={() => { this.gestionarComentario(excursionId) }}
                             title="ENVIAR"
                             color={colorGaztaroaOscuro}
                             accessibilityLabel=""
                         />
-                        <Button style={styles.formRow}
+                        <Button style={styles.botonModal}
                             onPress={() => { this.toggleModal(); this.resetForm(); }}
                             color={colorGaztaroaOscuro}
                             title="CANCELAR"
                         />
+                    </View>
+                </Modal>
+                <Modal
+                 visible={this.state.showModal2}
+                 transparent={false}
+                 //onDismiss={() => { this.toggleModal2() }}
+                 //onRequestClose={() => { this.toggleModal2() }}
+                >
+                    <View style= {styles.vista}>
+                        <Text style={styles.textoModal2}>¿Seguro que quiere apuntarse a la excursión?</Text>
+                        <Pressable style={styles.botonAceptar}
+                            onPress={() => { this.toggleModal2(); this.resetModal2()}}
+                        >
+                            <Text style= {styles.textoBotonModal}>ACEPTAR</Text>
+                        </Pressable>
+
+                        <Pressable style= {styles.botonCancelar}
+                         onPress={() => { this.toggleModal2(); this.resetModal2()}}
+                        >
+                            <Text style= {styles.textoBotonModal}>CANCELAR</Text>
+                        </Pressable>
+
+                        <Pressable style= {styles.botonModal}
+                         onPress={() => { this.toggleModal2(); this.resetModal2()}}
+                        >
+                            <Text style= {styles.textoBotonModal}>ACEPTAR Y AÑADIR AL CALENDARIO</Text>
+                        </Pressable>
                     </View>
                 </Modal>
             </ScrollView>
@@ -210,6 +267,65 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginTop: 10,
     },
+    botonModal: {
+        alignSelf: 'center',
+        backgroundColor: '#272727',
+        padding: '2%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    },
+    vista: {
+        paddingTop: 100,
+        paddingLeft: 30, 
+        paddingRight: 30,
+    }, 
+    icon: {
+        flexDirection: 'row', 
+        alingItems: 'center', 
+        justifyContent: 'center'
+    },
+    vistaApuntate: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '20%',
+    },
+    textoBotonModal: {
+        textAlign: 'center',
+        color: 'white'
+    },
+    textoModal2: {
+        textAlign: 'center',
+        fontSize: 20,
+        paddingBottom: '5%',
+        paddingTop: '40%'
+
+    },
+    botonApuntate: {
+        backgroundColor: '#b2dafa',
+        alignSelf: 'center',
+        padding: '4%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    },
+    botonAceptar: {
+        backgroundColor: '#4caf50',
+        alignSelf: 'center',
+        padding: '2%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    },
+    botonCancelar:{
+        backgroundColor: '#dc143c',
+        alignSelf: 'center',
+        padding: '2%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    }
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DetalleExcursion);
