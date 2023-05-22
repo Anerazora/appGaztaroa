@@ -14,10 +14,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colorGaztaroaClaro, colorGaztaroaOscuro } from '../comun/comun';
 import { connect } from 'react-redux';
 import { fetchExcursiones, fetchComentarios, fetchCabeceras, fetchActividades } from '../redux/ActionCreators';
+import Login from './LoginComponent';
+//import * as firebase from 'firebase/app';
+//import auth from 'firebase/auth';
+import { firebaseConfig } from '../comun/firebaseConfig';
+import { getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+const app = initializeApp(firebaseConfig);
+//import auth from '@firebase/auth/react-native';
+const auth = getAuth(app);
+import 'firebase/auth';
+//import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+
+
+//firebase.initializeApp(firebaseConfig);
 
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
+
 
 const mapStateToProps = state => {
   return {
@@ -129,7 +144,28 @@ function ContactoNavegador({ navigation }) {
   );
 }
 
-
+function LoginNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Usuario"
+      headerMode="screen"
+      screenOptions={{
+        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: colorGaztaroaOscuro },
+        headerTitleStyle: { color: '#fff' },
+        headerLeft: () => (<Icon name="menu" size={28} color='white' onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />),
+      }}
+    >
+      <Stack.Screen
+        name="Usuario"
+        component={Login}
+        options={{
+          title: 'Usuario',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
 function QuienesSomosNavegador({ navigation }) {
   return (
@@ -154,7 +190,7 @@ function QuienesSomosNavegador({ navigation }) {
   );
 }
 
-function DrawerNavegador() {
+function DrawerNavegador(props) {
   return (
     <Drawer.Navigator
       initialRouteName=" Drawer"
@@ -214,6 +250,18 @@ function DrawerNavegador() {
           )
         }}
       />
+      <Drawer.Screen name={props.user != null ? props.user.email + " [LogOut]" : "Iniciar sesion"} component={LoginNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon
+              name='user'
+              type='font-awesome'
+              size={22}
+              color={tintColor}
+            />
+          )
+        }}
+      />
     </Drawer.Navigator>
   );
 }
@@ -221,7 +269,19 @@ function DrawerNavegador() {
 
 class Campobase extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: null,
+    }
+  }
+
   componentDidMount() {
+    auth.onAuthStateChanged(userAuth => {
+      this.setState({ user: userAuth });
+      console.log(userAuth);
+    });
+
     this.props.fetchExcursiones();
     this.props.fetchComentarios();
     this.props.fetchCabeceras();
@@ -232,7 +292,7 @@ class Campobase extends Component {
     return (
       <NavigationContainer>
         <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
-          <DrawerNavegador />
+          <DrawerNavegador user={this.state.user} />
         </View>
       </NavigationContainer>
     );
