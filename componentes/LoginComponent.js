@@ -1,11 +1,17 @@
-import React, { Component } from 'react';
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import firebase from 'firebase/app';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
-import firebase from 'firebase/app';
-//import auth from 'firebase/auth';
 import { firebaseConfig } from '../comun/firebaseConfig';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { initializeApp } from "firebase/app";
+import React, { Component } from 'react';
+//import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
+//import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
+//import firebase from 'firebase/app';
+//import auth from 'firebase/auth';
+//import { firebaseConfig } from '../comun/firebaseConfig';
+//import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+//import { initializeApp } from "firebase/app";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 import 'firebase/auth';
@@ -70,7 +76,7 @@ class Login extends React.Component {
         } else {
             if (this.state.password == this.state.password2) {
                 //this.windowRef.recaptchaVerifier = new auth.RecaptchaVerifier('recaptcha-container');
-                createUserWithEmailAndPassword(this.state.auth, this.state.email, this.state.password)
+                createUserWithEmailAndPassword(auth, this.state.email, this.state.password)
                     .then((res) => {
                         console.log('Usuario registrado')
                         this.setState({
@@ -79,6 +85,11 @@ class Login extends React.Component {
                         showAlert("Registrado correctamente");
                     })
                     .catch(error => { console.log(error); showAlert("Error", error.message) });
+                //.catch((error) => {
+                // if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
+                //  alert("The password is too weak");
+                // }
+                // });
 
             } else {
                 showAlert("Error", "Las contraseñas no coinciden");
