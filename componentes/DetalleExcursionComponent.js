@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, FlatList, Modal, Button } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, FlatList, Modal, Button, Pressable } from 'react-native';
 import { Card, Icon, Input } from '@rneui/themed';
 import { Rating } from 'react-native-ratings';
 import { baseUrl } from '../comun/comun';
@@ -55,6 +55,11 @@ function RenderExcursion(props) {
                         color={colorGaztaroaOscuro}
                         onPress={() => props.onPressComentario()}
                     />
+                    <Pressable style={styles.botonApuntate}
+                     onPress={() => props.onPressApuntate()}
+                    >
+                        <Text>Apúntate a la excursión!</Text>
+                    </Pressable>
                 </View>
             </Card>
         );
@@ -101,14 +106,22 @@ class DetalleExcursion extends Component {
             valoracion: 3,
             autor: '',
             comentario: '',
-            showModal: false
+            showModal: false,
+            showModal2: false,
         }
     }
 
     toggleModal() {
         this.setState({ showModal: !this.state.showModal });
     }
-
+    toggleModal2(){
+        this.setState({ showModal2: !this.state.showModal2 });
+    }
+    resetModal2(){
+        this.setState({
+            showModal2: false,
+        })
+    }
     resetForm() {
         this.setState({
             valoracion: 3,
@@ -149,6 +162,7 @@ class DetalleExcursion extends Component {
                     favorita={this.props.favoritos.favoritos.some(el => el === excursionId)}
                     onPress={() => this.marcarFavorito(excursionId)}
                     onPressComentario={() => this.toggleModal()}
+                    onPressApuntate = { () => this.toggleModal2()}
                 />
                 <RenderComentario
                     comentarios={comentarios}
@@ -211,6 +225,33 @@ class DetalleExcursion extends Component {
                         />
                     </View>
                 </Modal>
+                <Modal
+                 visible={this.state.showModal2}
+                 transparent={false}
+                 //onDismiss={() => { this.toggleModal2() }}
+                 //onRequestClose={() => { this.toggleModal2() }}
+                >
+                    <View style= {styles.vista}>
+                        <Text style={styles.textoModal2}>¿Seguro que quiere apuntarse a la excursión?</Text>
+                        <Pressable style={styles.botonAceptar}
+                            onPress={() => { this.toggleModal2(); this.resetModal2()}}
+                        >
+                            <Text style= {styles.textoBotonModal}>ACEPTAR</Text>
+                        </Pressable>
+
+                        <Pressable style= {styles.botonCancelar}
+                         onPress={() => { this.toggleModal2(); this.resetModal2()}}
+                        >
+                            <Text style= {styles.textoBotonModal}>CANCELAR</Text>
+                        </Pressable>
+
+                        <Pressable style= {styles.botonModal}
+                         onPress={() => { this.toggleModal2(); this.resetModal2()}}
+                        >
+                            <Text style= {styles.textoBotonModal}>ACEPTAR Y AÑADIR AL CALENDARIO</Text>
+                        </Pressable>
+                    </View>
+                </Modal>
             </ScrollView>
         );
     }
@@ -244,6 +285,47 @@ const styles = StyleSheet.create({
         alingItems: 'center', 
         justifyContent: 'center'
     },
+    vistaApuntate: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '20%',
+    },
+    textoBotonModal: {
+        textAlign: 'center',
+        color: 'white'
+    },
+    textoModal2: {
+        textAlign: 'center',
+        fontSize: 20,
+        paddingBottom: '5%',
+        paddingTop: '40%'
+
+    },
+    botonApuntate: {
+        backgroundColor: '#b2dafa',
+        alignSelf: 'center',
+        padding: '4%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    },
+    botonAceptar: {
+        backgroundColor: '#4caf50',
+        alignSelf: 'center',
+        padding: '2%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    },
+    botonCancelar:{
+        backgroundColor: '#dc143c',
+        alignSelf: 'center',
+        padding: '2%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '45%',
+    }
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DetalleExcursion);
