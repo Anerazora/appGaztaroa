@@ -190,6 +190,29 @@ function QuienesSomosNavegador({ navigation }) {
   );
 }
 
+function GpsNavegador({ navigation }) {
+  return (
+    <Stack.Navigator
+      initialRouteName="GPS"
+      headerMode="screen"
+      screenOptions={{
+        headerTintColor: '#fff',
+        headerStyle: { backgroundColor: colorGaztaroaOscuro },
+        headerTitleStyle: { color: '#fff' },
+        headerLeft: () => (<Icon name="menu" size={28} color='white' onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} />),
+      }}
+    >
+      <Stack.Screen
+        name="Who"
+        component={GpsNavegador}
+        options={{
+          title: 'GPS',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function DrawerNavegador(props) {
   return (
     <Drawer.Navigator
@@ -255,6 +278,18 @@ function DrawerNavegador(props) {
           drawerIcon: ({ tintColor }) => (
             <Icon
               name='user'
+              type='font-awesome'
+              size={22}
+              color={tintColor}
+            />
+          )
+        }}
+      />
+      <Drawer.Screen name="GPS" component={GpsNavegador}
+        options={{
+          drawerIcon: ({ tintColor }) => (
+            <Icon
+              name='address-card'
               type='font-awesome'
               size={22}
               color={tintColor}
