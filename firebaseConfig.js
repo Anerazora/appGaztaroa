@@ -13,8 +13,8 @@ const firebaseConfig = {
   projectId: "appgaztaroa-53ec5",
   storageBucket: "appgaztaroa-53ec5.appspot.com",
   messagingSenderId: "750197807379",
-  appId: "1:750197807379:web:8b6ca7799b5b53e83762e6",
-  measurementId: "G-YXPRW0G5CV"
+  appId: "1:750197807379:web:ac15b99608637a443762e6",
+  measurementId: "G-5NHR2QKDVL"
 };
 
 // Initialize Firebase
