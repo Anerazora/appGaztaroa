@@ -3,6 +3,7 @@ import { Platform, Text, View, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
+
 export default function LocationGps() {
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -30,12 +31,52 @@ export default function LocationGps() {
     if (errorMsg) {
         text = errorMsg;
     } else if (location) {
-        text = JSON.stringify(location);
+        text = JSON.stringify(location.coords.altitude);//Poner location para que saque todo
+        const data = {
+            "coords": {
+                "speed": speed,
+                "longitude": longitude,
+                "latitude": latitude,
+                "accuracy": accuracy,
+                "heading": heading,
+                "altitude": altitude,
+                "altitudeAccuracy": altitudeAccuracy
+            },
+            "timestamp": timestamp
+        };
+
+        const speed = location.coords.speed;
+        const longitude = location.coords.longitude;
+        const latitude = location.coords.latitude;
+        const accuracy = location.coords.accuracy;
+        const heading = location.coords.heading;
+        const altitude = location.coords.altitude;
+        const altitudeAccuracy = location.coords.altitudeAccuracy;
+        const timestamp = location.coords.timestamp;
+
+        console.log('Speed:', speed);
+        console.log('Longitude:', longitude);
+        console.log('Latitude:', latitude);
+        console.log('Accuracy:', accuracy);
+        console.log('Heading:', heading);
+        console.log('Altitude:', altitude);
+        console.log('Altitude Accuracy:', altitudeAccuracy);
+        console.log('Timestamp:', timestamp);
+        const formattedData = JSON.stringify(location, null, 2);
+
+        console.log(formattedData);
     }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.paragraph}>{text}</Text>
+            <Text style={styles.label}>DATOS DE GEOLOCALIZACION</Text>
+            <Text style={styles.paragraph}>Speed: {location.coords.speed}</Text>
+            <Text style={styles.paragraph}>Longitude: {location.coords.longitude}</Text>
+            <Text style={styles.paragraph}>Latitude: {location.coords.latitude}</Text>
+            <Text style={styles.paragraph}>Accuracy: {location.coords.accuracy}</Text>
+            <Text style={styles.paragraph}>Heading: {location.coords.heading}</Text>
+            <Text style={styles.paragraph}>Altitude: {location.coords.altitude}</Text>
+            <Text style={styles.paragraph}>Altitude Accuracy: {location.coords.altitudeAccuracy}</Text>
         </View>
     );
 }
@@ -50,5 +91,12 @@ const styles = StyleSheet.create({
     paragraph: {
         fontSize: 18,
         textAlign: 'center',
+    },
+    label: {
+        fontWeight: 'bold',
+        textDecorationLine: 'underline',
+        marginBottom: 10,
+        fontSize: 20,
+        textAlign: 'center'
     },
 });
