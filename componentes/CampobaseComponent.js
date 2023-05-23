@@ -15,6 +15,8 @@ import { colorGaztaroaClaro, colorGaztaroaOscuro } from '../comun/comun';
 import { connect } from 'react-redux';
 import { fetchExcursiones, fetchComentarios, fetchCabeceras, fetchActividades } from '../redux/ActionCreators';
 import Login from './LoginComponent';
+//import Gps from './GpsComponent';
+import LocationGps from './LocationComponent';
 //import * as firebase from 'firebase/app';
 //import auth from 'firebase/auth';
 import { firebaseConfig } from '../comun/firebaseConfig';
@@ -190,7 +192,7 @@ function QuienesSomosNavegador({ navigation }) {
   );
 }
 
-function GpsNavegador({ navigation }) {
+function LocationNavegador({ navigation }) {
   return (
     <Stack.Navigator
       initialRouteName="GPS"
@@ -204,7 +206,7 @@ function GpsNavegador({ navigation }) {
     >
       <Stack.Screen
         name="Who"
-        component={GpsNavegador}
+        component={LocationGps}
         options={{
           title: 'GPS',
         }}
@@ -285,7 +287,7 @@ function DrawerNavegador(props) {
           )
         }}
       />
-      <Drawer.Screen name="GPS" component={GpsNavegador}
+      <Drawer.Screen name="GPS" component={LocationNavegador}
         options={{
           drawerIcon: ({ tintColor }) => (
             <Icon
