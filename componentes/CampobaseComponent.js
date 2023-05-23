@@ -113,7 +113,7 @@ function HomeNavegador({ navigation }) {
       }}
     >
       <Stack.Screen
-        name="Etxea"
+        name="Home"
         component={Home}
         options={{
           title: 'Campo Base',
@@ -269,7 +269,7 @@ function DrawerNavegador(props) {
             <Icon
               name='address-card'
               type='font-awesome'
-              size={22}
+              size={24}
               color={tintColor}
             />
           )
@@ -281,7 +281,7 @@ function DrawerNavegador(props) {
             <Icon
               name='user'
               type='font-awesome'
-              size={22}
+              size={24}
               color={tintColor}
             />
           )
@@ -291,9 +291,9 @@ function DrawerNavegador(props) {
         options={{
           drawerIcon: ({ tintColor }) => (
             <Icon
-              name='address-card'
+              name='map-marker'
               type='font-awesome'
-              size={22}
+              size={24}
               color={tintColor}
             />
           )
