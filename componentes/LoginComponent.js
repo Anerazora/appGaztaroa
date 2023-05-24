@@ -5,6 +5,7 @@ import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } fr
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
 import { firebaseConfig } from '../comun/firebaseConfig';
 import React, { Component } from 'react';
+import { Card } from "react-native-elements";
 //import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
 //import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
 //import firebase from 'firebase/app';
@@ -15,7 +16,10 @@ import React, { Component } from 'react';
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 import 'firebase/auth';
-
+//import { Card } from "react-native-elements";
+import { CardImage } from "@rneui/base/dist/Card/Card.Image";
+import { Pressable } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 
 
 function showAlert(title, text) {
@@ -42,6 +46,7 @@ class Login extends React.Component {
             password: '',
             password2: '',
             signin: false,
+            selectedImage: null,
         }
     }
 
@@ -97,20 +102,66 @@ class Login extends React.Component {
         }
     };
 
+    openImagePicker = async () => {
+        // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        // if (status !== 'granted') {
+        //   console.log('no tiene permisos para acceder a la galería')
+        // } else {
+            //const result = await ImagePicker.launchImageLibraryAsync();
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+              });
+            console.log(result)
+            if (!result.canceled) {
+                //console.log(result.assets[0].uri)
+                console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
+
+                this.setState({ selectedImage: result.assets[0].uri });
+                // if (!result.cancelled) {
+                //   // La imagen fue seleccionada exitosamente
+                //   console.log(result.uri);
+                // } 
+            }
+            // else {
+            //     console.log('SE HA CANCELADO LA ACCION')
+            // } 
+        // }
+    }
     render() {
+      
         if (this.state.user) {
 
             return (
-                <View style={styles.container}>
-                    <Text style={styles.logintext}> Bienvenido {this.state.user.email} !</Text>
-                    <Button style={styles.logout}
-                        onPress={() => auth.signOut().then(() => {
-                            console.log("SignOut OK");
-                        }).catch((error) => {
-                            console.log("SignOut ERROR");
-                        })}
-                        title="Salir"
-                        color="#f70000" />
+                <View >
+                    <Card>
+                        {/* <Text style={styles.logintext}> Bienvenido {this.state.user.email} !</Text> */}
+                        <Card.Title>Bienvenido {this.state.user.email} !</Card.Title>
+                        <Card.Divider/>
+                        <View  style={styles.vistaCard}>
+                            <Text>Nombre de usuario: {this.state.user.email} </Text>
+                                <View style={styles.vistaCard2}>
+                                    
+                                <Card.Image source={{ uri: this.state.selectedImage }}>
+                                </Card.Image>                                   
+                                    <Pressable  
+                                    style={styles.botonAnadirImagen}
+                                    onPress={() => { this.openImagePicker()}} >
+                                        <Text>Añadir imagen de perfil</Text>
+                                    </Pressable>
+                                </View>
+                            <Button style={styles.logout}
+                                onPress={() => auth.signOut().then(() => {
+                                    console.log("SignOut OK");
+                                }).catch((error) => {
+                                    console.log("SignOut ERROR");
+                                })}
+                                title="Salir"
+                                color="#f70000" />
+                        </View>
+                    </Card>
                 </View>
             )
 
@@ -235,6 +286,20 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    vistaCard: {
+        flexDirection: 'column',
+    },
+    vistaCard2: {
+        flexDirection: 'row'
+    },
+    botonAnadirImagen: {
+        backgroundColor: '#b2dafa',
+        alignSelf: 'center',
+        padding: '4%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '50%',
+    }
 
 })
 
