@@ -15,12 +15,14 @@ import { Card } from "react-native-elements";
 //import { initializeApp } from "firebase/app";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+
 import 'firebase/auth';
 //import { Card } from "react-native-elements";
 import { CardImage } from "@rneui/base/dist/Card/Card.Image";
 import { Pressable } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 
+import { Image } from "react-native-elements";
 
 function showAlert(title, text) {
     Alert.alert(
@@ -35,7 +37,34 @@ function showAlert(title, text) {
         { cancelable: true }
     )
 };
-
+async function openImagePicker () {
+        // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        // if (status !== 'granted') {
+        //   console.log('no tiene permisos para acceder a la galería')
+        // } else {
+            //const result = await ImagePicker.launchImageLibraryAsync();
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            console.log('Resultado en la funcion del picker'+result)
+            if (!result.canceled) {
+                //console.log(result.assets[0].uri)
+                //console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
+                return(result)
+                //this.setState({ selectedImage: result.assets[0].uri });
+                // if (!result.cancelled) {
+                //   // La imagen fue seleccionada exitosamente
+                //   console.log(result.uri);
+                // } 
+            }
+            else {
+                return(console.log('SE HA CANCELADO LA ACCION'))
+            } 
+        // }
+}
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -47,6 +76,7 @@ class Login extends React.Component {
             password2: '',
             signin: false,
             selectedImage: null,
+            mostrarImagen: false,
         }
     }
 
@@ -74,7 +104,7 @@ class Login extends React.Component {
     };
 
     handleSignIn = () => {
-        console.log(this.state.signin);
+        console.log('Esto es la variable sigin'+this.state.signin);
 
         if (!this.state.signin) {
             this.setState({ signin: true });
@@ -102,33 +132,44 @@ class Login extends React.Component {
         }
     };
 
-    openImagePicker = async () => {
-        // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        // if (status !== 'granted') {
-        //   console.log('no tiene permisos para acceder a la galería')
-        // } else {
-            //const result = await ImagePicker.launchImageLibraryAsync();
-            let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.All,
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1,
-              });
-            console.log(result)
-            if (!result.canceled) {
-                //console.log(result.assets[0].uri)
-                console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
+    // openImagePicker = async () => {
+    //     // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    //     // if (status !== 'granted') {
+    //     //   console.log('no tiene permisos para acceder a la galería')
+    //     // } else {
+    //         //const result = await ImagePicker.launchImageLibraryAsync();
+    //         let result = await ImagePicker.launchImageLibraryAsync({
+    //             mediaTypes: ImagePicker.MediaTypeOptions.All,
+    //             allowsEditing: true,
+    //             aspect: [4, 3],
+    //             quality: 1,
+    //           });
+    //         console.log(result)
+    //         if (!result.canceled) {
+    //             //console.log(result.assets[0].uri)
+    //             console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
 
-                this.setState({ selectedImage: result.assets[0].uri });
-                // if (!result.cancelled) {
-                //   // La imagen fue seleccionada exitosamente
-                //   console.log(result.uri);
-                // } 
-            }
-            // else {
-            //     console.log('SE HA CANCELADO LA ACCION')
-            // } 
-        // }
+    //             this.setState({ selectedImage: result.assets[0].uri });
+    //             // if (!result.cancelled) {
+    //             //   // La imagen fue seleccionada exitosamente
+    //             //   console.log(result.uri);
+    //             // } 
+    //         }
+    //         else {
+    //             console.log('SE HA CANCELADO LA ACCION')
+    //         } 
+    //     // }
+    // }
+    handleGaleria = async () => {
+        const Image = await openImagePicker();
+        console.log('resultado en el handle: '+Image)
+        if ( !Image.canceled){
+            this.setState({selectedImage: Image.assets[0].uri})
+            this.setState({mostrarImagen: true})
+        } else {
+            console.log('handle galeria ha fallado')
+        }
+        
     }
     render() {
       
@@ -142,16 +183,21 @@ class Login extends React.Component {
                         <Card.Divider/>
                         <View  style={styles.vistaCard}>
                             <Text>Nombre de usuario: {this.state.user.email} </Text>
-                                <View style={styles.vistaCard2}>
-                                    
-                                <Card.Image source={{ uri: this.state.selectedImage }}>
-                                </Card.Image>                                   
+                                
+                                 {this.state.mostrarImagen === false ? (
+                                    <Card.Image style={styles.imagenUser}
+                                    source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
+                                 ) : (
+                                    <Card.Image style={styles.imagenUser}
+                                    source={{ uri: this.state.selectedImage}}></Card.Image>
+                                 )}   
+                                                        
                                     <Pressable  
                                     style={styles.botonAnadirImagen}
-                                    onPress={() => { this.openImagePicker()}} >
+                                    onPress={() => this.handleGaleria()}>
                                         <Text>Añadir imagen de perfil</Text>
                                     </Pressable>
-                                </View>
+                              
                             <Button style={styles.logout}
                                 onPress={() => auth.signOut().then(() => {
                                     console.log("SignOut OK");
@@ -299,6 +345,10 @@ const styles = StyleSheet.create({
         marginBottom: '5%',
         borderRadius: '20%',
         maxWidth: '50%',
+    },
+    imagenUser: {
+        width: 100,
+        height: 100
     }
 
 })
