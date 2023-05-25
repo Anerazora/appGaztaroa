@@ -1,11 +1,14 @@
-import { initializeApp } from "firebase/app";
+//import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import firebase from 'firebase/app';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
-import { firebaseConfig } from '../comun/firebaseConfig';
+//import { firebaseConfig } from '../comun/firebaseConfig';
+import app from "../firebaseConfig";
 import React, { Component } from 'react';
 import { Card } from "react-native-elements";
+import 'firebase/storage';
+import { getStorage, ref, putFile, child, put, blob, uploadBytes, getDownloadURL, uploadBytesResumable} from "firebase/storage";
 //import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
 //import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
 //import firebase from 'firebase/app';
@@ -13,8 +16,10 @@ import { Card } from "react-native-elements";
 //import { firebaseConfig } from '../comun/firebaseConfig';
 //import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 //import { initializeApp } from "firebase/app";
-const app = initializeApp(firebaseConfig);
+//const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
+const storage = getStorage (app);
 
 import 'firebase/auth';
 //import { Card } from "react-native-elements";
@@ -61,10 +66,46 @@ async function openImagePicker () {
                 // } 
             }
             else {
-                return(console.log('SE HA CANCELADO LA ACCION'))
+                return(
+                    console.log('SE HA CANCELADO LA ACCION')
+                    //<View></View>
+                    
+                    )
             } 
         // }
 }
+async function guardarImagenEnStorage (uri, nombreArchivo) {
+        
+    console.log('el nombre del archivo que recibe la funcion es: '+nombreArchivo);
+    console.log('la uri que recibe la funcion es: '+uri)
+    try {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const storageRef = ref(storage,`users/${nombreArchivo}`);
+        uploadBytesResumable(storageRef, blob);
+        return (console.log('se ha subido la imagen correctamente!'))
+        //const snapshot = uploadBytesResumable(storageRef, blob);
+        // let URLStorage = await getDownloadURL(snapshot.ref);
+        // return(URLStorage)
+        //console.log('Imagen subida exitosamente');
+    } catch (error) {
+        console.log('Error al subir la imagen:', error);
+    }
+    // const imagenRef = storageRef.child(`users/${nombreArchivo}`);
+    // console.log(imagenRef)
+    // try {
+    //   await imagenRef.putFile(uri);
+    //   console.log('La imagen se ha guardado correctamente en Firebase Storage');
+    // } catch (error) {
+    //   console.error('Error al guardar la imagen en Firebase Storage:', error);
+    // }
+};
+// function devolverURLImagenUser (nombreFoto) {
+//     const storageRef = ref(storage,`users/${nombreFoto}`);
+//     const URLImagen = getDownloadURL(storageRef)
+//     console.log('esta la URL del storage del user: '+ URLImagen)
+//     return (URLImagen)
+// }
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -77,6 +118,7 @@ class Login extends React.Component {
             signin: false,
             selectedImage: null,
             mostrarImagen: false,
+            ImagenUser: null,
         }
     }
 
@@ -85,10 +127,12 @@ class Login extends React.Component {
             if (user) {
                 console.log("LOGUEADO");
                 this.setState({ user: user });
+                // this.devolverURLImagenUser(this.state.user.uid)
             } else {
                 console.log("NO LOGUEADO");
             }
         });
+        
     }
 
     handleLogin = () => {
@@ -163,18 +207,60 @@ class Login extends React.Component {
     handleGaleria = async () => {
         const Image = await openImagePicker();
         console.log('resultado en el handle: '+Image)
+        
         if ( !Image.canceled){
             this.setState({selectedImage: Image.assets[0].uri})
             this.setState({mostrarImagen: true})
+            console.log('El UID de usuario es: '+ this.state.user.uid)
+            console.log('Ahora el estado de selectedimage es la URI: '+this.state.selectedImage)
+
+            try{
+                
+            // const URLImage = await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
+            // console.log( 'URL de la imagen guardada en firestore'+URLImage)
+            await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
+            } catch (error){
+                console.log('error de guardar imagen en store. '+error)
+            }
+            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
+            // this.setState({ImagenUser: URLImagen})
+
         } else {
             console.log('handle galeria ha fallado')
         }
         
     }
+
+    // guardarImagenEnStorage = async (uri, nombreArchivo) => {
+        
+    //     console.log(nombreArchivo);
+    //     console.log(uri)
+    //     try {
+    //         const response = await fetch(uri);
+    //         const blob = await response.blob();
+    //         const storageRef = ref(storage,`users/${nombreArchivo}`);
+    //         await uploadBytesResumable(storageRef, blob);
+    //         console.log('Imagen subida exitosamente');
+    //     } catch (error) {
+    //         console.log('Error al subir la imagen:', error);
+    //     }
+    //     // const imagenRef = storageRef.child(`users/${nombreArchivo}`);
+    //     // console.log(imagenRef)
+    //     // try {
+    //     //   await imagenRef.putFile(uri);
+    //     //   console.log('La imagen se ha guardado correctamente en Firebase Storage');
+    //     // } catch (error) {
+    //     //   console.error('Error al guardar la imagen en Firebase Storage:', error);
+    //     // }
+    // };
+
     render() {
       
         if (this.state.user) {
-
+            // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)})
+            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
+            // console.log(URLImagen)
+            // this.setState({ImagenUser: URLImagen})
             return (
                 <View >
                     <Card>
