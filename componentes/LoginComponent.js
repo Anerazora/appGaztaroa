@@ -1,7 +1,7 @@
 //import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import firebase from 'firebase/app';
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert, Imagen } from 'react-native';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
 //import { firebaseConfig } from '../comun/firebaseConfig';
 import app from "../firebaseConfig";
@@ -28,6 +28,7 @@ import { Pressable } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 
 import { Image } from "react-native-elements";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 function showAlert(title, text) {
     Alert.alert(
@@ -100,12 +101,51 @@ async function guardarImagenEnStorage (uri, nombreArchivo) {
     //   console.error('Error al guardar la imagen en Firebase Storage:', error);
     // }
 };
-// function devolverURLImagenUser (nombreFoto) {
-//     const storageRef = ref(storage,`users/${nombreFoto}`);
-//     const URLImagen = getDownloadURL(storageRef)
-//     console.log('esta la URL del storage del user: '+ URLImagen)
+async function devolverURLImagenUser (nombreFoto) {
+    console.log(nombreFoto)
+    const storageRef = ref(storage,`users/${nombreFoto}`);
+    try{
+       getDownloadURL(storageRef)
+       .then ((URLImagen) => {
+        
+            console.log('la URL que devuelve la funcion'+URLImagen)
+    //    console.log('LA URL OBTENIDA ES: '+URLImagen)
+            return(URLImagen)
+        })
+        .catch((error) => {
+            // this.setState({ImagenUser: null});
+        
+            console.error('Error al obtener la URL de descarga:', error);
+        });
+    } catch (error) {
+        console.log('Error al obtener la URL de descarga:', error);
+    }
+    // await getDownloadURL(storageRef)
+    //     .then ((URLImagen) => {
+        
+    //         console.log('la URL que devuelve la funcion'+URLImagen)
+    //         // console.log(typeof URLImagen);
+    //         // const jsonString = JSON.stringify(URLImagen);
+    //         // console.log(jsonString)
+    //         // console.log(typeof jsonString);
+    //         // this.setState({ImagenUser: URLImagen, mostrarImagen: true} )
+    //         // return(
+    //         //     <Imagen
+    //         //     source={{ uri: URLImagen}}
+    //         //     >
+
+    //         //     </Imagen>
+    //         // );
+    //         return (URLImagen)
+    //     })
+    //     .catch((error) => {
+    //         // this.setState({ImagenUser: null});
+           
+    //         console.error('Error al obtener la URL de descarga:', error);
+    //     });
+            //     console.log('esta la URL del storage del user: '+ URLImagen)
 //     return (URLImagen)
-// }
+}
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -127,6 +167,15 @@ class Login extends React.Component {
             if (user) {
                 console.log("LOGUEADO");
                 this.setState({ user: user });
+                console.log('LO QUE HAY EN EL ESTADO USER: '+ this.state.user.uid);
+                // const user1 = devolverURLImagenUser(this.state.user.uid);
+                // console.log('la foto del usuario obtenida de la func es:'+user1)
+                // this.setState({ImagenUser: user1 });
+                // console.log(this.state.ImagenUser)
+                // console.log('la url del usario es '+user1)
+                // console.log('el estado de la imagen del usuario es:'+this.state.ImagenUser)
+                // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)});
+                // console.log(this.state.ImagenUser);
                 // this.devolverURLImagenUser(this.state.user.uid)
             } else {
                 console.log("NO LOGUEADO");
@@ -138,7 +187,8 @@ class Login extends React.Component {
     handleLogin = () => {
         if (this.state.signin) {
             this.setState({ signin: false });
-
+            // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)});
+            // console.log(this.state.ImagenUser);
         } else {
             const { email, password } = this.state;
 
@@ -210,7 +260,7 @@ class Login extends React.Component {
         
         if ( !Image.canceled){
             this.setState({selectedImage: Image.assets[0].uri})
-            this.setState({mostrarImagen: true})
+            ///this.setState({mostrarImagen: true})
             console.log('El UID de usuario es: '+ this.state.user.uid)
             console.log('Ahora el estado de selectedimage es la URI: '+this.state.selectedImage)
 
@@ -255,11 +305,11 @@ class Login extends React.Component {
     // };
 
     render() {
-      
+        // const {myFoto} = this.state.ImagenUser;
         if (this.state.user) {
             // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)})
-            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
-            // console.log(URLImagen)
+            const URLImagen = devolverURLImagenUser (this.state.user.uid)
+            console.log('LA URL EN EL REDER'+URLImagen)
             // this.setState({ImagenUser: URLImagen})
             return (
                 <View >
@@ -269,20 +319,21 @@ class Login extends React.Component {
                         <Card.Divider/>
                         <View  style={styles.vistaCard}>
                             <Text>Nombre de usuario: {this.state.user.email} </Text>
-                                
-                                 {this.state.mostrarImagen === false ? (
+                             {/* <Card.Image style={styles.imagenUser}
+                             source={ myFoto}></Card.Image> */}
+                                 {/* {this.state.mostrarImagen === false ? (
                                     <Card.Image style={styles.imagenUser}
                                     source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
                                  ) : (
-                                    <Card.Image style={styles.imagenUser}
-                                    source={{ uri: this.state.selectedImage}}></Card.Image>
+                                    // <Card.Image style={styles.imagenUser}
+                                    // source={ URLImagen}></Card.Image>
                                  )}   
                                                         
                                     <Pressable  
                                     style={styles.botonAnadirImagen}
                                     onPress={() => this.handleGaleria()}>
                                         <Text>Añadir imagen de perfil</Text>
-                                    </Pressable>
+                                    </Pressable> */}
                               
                             <Button style={styles.logout}
                                 onPress={() => auth.signOut().then(() => {
