@@ -101,25 +101,25 @@ async function guardarImagenEnStorage (uri, nombreArchivo) {
     //   console.error('Error al guardar la imagen en Firebase Storage:', error);
     // }
 };
-async function devolverURLImagenUser (nombreFoto) {
-    console.log(nombreFoto)
-    const storageRef = ref(storage,`users/${nombreFoto}`);
-    try{
-       getDownloadURL(storageRef)
-       .then ((URLImagen) => {
+// async function devolverURLImagenUser (nombreFoto) {
+//     console.log(nombreFoto)
+//     const storageRef = ref(storage,`users/${nombreFoto}`);
+//     try{
+//        getDownloadURL(storageRef)
+//        .then ((URLImagen) => {
         
-            console.log('la URL que devuelve la funcion'+URLImagen)
-    //    console.log('LA URL OBTENIDA ES: '+URLImagen)
-            return(URLImagen)
-        })
-        .catch((error) => {
-            // this.setState({ImagenUser: null});
+//             console.log('la URL que devuelve la funcion'+URLImagen)
+//     //    console.log('LA URL OBTENIDA ES: '+URLImagen)
+//             return(URLImagen)
+//         })
+//         .catch((error) => {
+//             // this.setState({ImagenUser: null});
         
-            console.error('Error al obtener la URL de descarga:', error);
-        });
-    } catch (error) {
-        console.log('Error al obtener la URL de descarga:', error);
-    }
+//             console.error('Error al obtener la URL de descarga:', error);
+//         });
+//     } catch (error) {
+//         console.log('Error al obtener la URL de descarga:', error);
+//     }
     // await getDownloadURL(storageRef)
     //     .then ((URLImagen) => {
         
@@ -145,7 +145,7 @@ async function devolverURLImagenUser (nombreFoto) {
     //     });
             //     console.log('esta la URL del storage del user: '+ URLImagen)
 //     return (URLImagen)
-}
+// }
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -167,7 +167,7 @@ class Login extends React.Component {
             if (user) {
                 console.log("LOGUEADO");
                 this.setState({ user: user });
-                console.log('LO QUE HAY EN EL ESTADO USER: '+ this.state.user.uid);
+                // console.log('LO QUE HAY EN EL ESTADO USER: '+ this.state.user.uid);
                 // const user1 = devolverURLImagenUser(this.state.user.uid);
                 // console.log('la foto del usuario obtenida de la func es:'+user1)
                 // this.setState({ImagenUser: user1 });
@@ -280,6 +280,28 @@ class Login extends React.Component {
         }
         
     }
+    devolverURLImagenUser = async (nombreFoto) => {
+        // console.log('Foto en devolver URL'+nombreFoto)
+        const storageRef = ref(storage,`users/${nombreFoto}`);
+        try{
+           getDownloadURL(storageRef)
+           .then ((URLImagen) => {
+            
+                // console.log('la URL que devuelve la funcion'+URLImagen)
+                this.setState({ImagenUser: URLImagen})
+                // console.log(this.state.ImagenUser)
+        //    console.log('LA URL OBTENIDA ES: '+URLImagen)
+                // return(URLImagen)
+            })
+            .catch((error) => {
+                // this.setState({ImagenUser: null});
+            
+                console.error('Error al obtener la URL de descarga:', error);
+            });
+        } catch (error) {
+            console.log('Error al obtener la URL de descarga:', error);
+        }
+    }
 
     // guardarImagenEnStorage = async (uri, nombreArchivo) => {
         
@@ -307,10 +329,11 @@ class Login extends React.Component {
     render() {
         // const {myFoto} = this.state.ImagenUser;
         if (this.state.user) {
-            // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)})
-            const URLImagen = devolverURLImagenUser (this.state.user.uid)
-            console.log('LA URL EN EL REDER'+URLImagen)
-            // this.setState({ImagenUser: URLImagen})
+            console.log('EL USUARIO EN EL RENDER DEL COMPONENTE'+this.state.user.uid)
+            this.devolverURLImagenUser(this.state.user.uid)
+            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
+            // console.log('LA URL EN EL REDER'+URLImagen)
+           
             return (
                 <View >
                     <Card>
@@ -319,8 +342,8 @@ class Login extends React.Component {
                         <Card.Divider/>
                         <View  style={styles.vistaCard}>
                             <Text>Nombre de usuario: {this.state.user.email} </Text>
-                             {/* <Card.Image style={styles.imagenUser}
-                             source={ myFoto}></Card.Image> */}
+                             <Card.Image style={styles.imagenUser}
+                             source={{uri: this.state.ImagenUser}}></Card.Image>
                                  {/* {this.state.mostrarImagen === false ? (
                                     <Card.Image style={styles.imagenUser}
                                     source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
