@@ -1,5 +1,5 @@
 //import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import firebase from 'firebase/app';
 import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert, Imagen } from 'react-native';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
@@ -35,6 +35,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { Image } from "react-native-elements";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { update } from "firebase/database";
 
 function showAlert(title, text) {
     Alert.alert(
@@ -165,6 +166,7 @@ class Login extends React.Component {
             selectedImage: null,
             mostrarImagen: false,
             ImagenUser: null,
+            //photoURL: null,
         }
     }
 
@@ -206,6 +208,7 @@ class Login extends React.Component {
     handleSignIn = () => {
         console.log('Esto es la variable sigin' + this.state.signin);
 
+
         if (!this.state.signin) {
             this.setState({ signin: true });
         } else {
@@ -213,12 +216,30 @@ class Login extends React.Component {
                 //this.windowRef.recaptchaVerifier = new auth.RecaptchaVerifier('recaptcha-container');
                 createUserWithEmailAndPassword(auth, this.state.email, this.state.password)
                     .then((res) => {
+                        //const user = res.user;
+
                         console.log('Usuario registrado')
+
                         this.setState({
                             user: res.user,
                         });
+                        const defaultPhotoUrl = 'https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a';
+                        //console.log('Este es el uid del usuario registrado' + this.state.user.uid);
+                        guardarImagenEnStorage(defaultPhotoUrl, res.user.uid);
+
+                        const avatar = this.devolverURLImagenUser(res.user.uid)
+
+                        updateProfile(res.user, {
+                            photoURL: avatar,
+                        });
+
                         showAlert("Registrado correctamente");
-                    })
+
+
+                    })//.then(() => {
+                    //guardarImagenEnStorage(this.state.user.photoURL, this.state.user.uid);
+                    //console.log('Este es el uid del usuario registrado' + this.state.user.uid);
+                    // })
                     .catch(error => { console.log(error); showAlert("Error", error.message) });
                 //.catch((error) => {
                 // if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
@@ -335,7 +356,7 @@ class Login extends React.Component {
     render() {
         // const {myFoto} = this.state.ImagenUser;
         if (this.state.user) {
-            console.log('EL USUARIO EN EL RENDER DEL COMPONENTE' + this.state.user.uid)
+            //console.log('EL USUARIO EN EL RENDER DEL COMPONENTE' + this.state.user.uid)
             this.devolverURLImagenUser(this.state.user.uid)
             // const URLImagen = devolverURLImagenUser (this.state.user.uid)
             // console.log('LA URL EN EL REDER'+URLImagen)
@@ -346,43 +367,24 @@ class Login extends React.Component {
                         {/* <Text style={styles.logintext}> Bienvenido {this.state.user.email} !</Text> */}
                         <Card.Title>Bienvenido {this.state.user.email} !</Card.Title>
                         <Card.Divider />
-                        <View style={styles.vistaCard}>
-                            <Text>Nombre de usuario: {this.state.user.email} </Text>
-                            <Card.Image style={styles.imagenUser}
-                                source={{ uri: this.state.ImagenUser }}></Card.Image>
-                            {/* {this.state.mostrarImagen === false ? (
-                                <Card.Image style={styles.imagenUser}
-                                    source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
-                            ) : (
-                                //<Card.Image style={styles.imagenUser}
-                                    //source={{ uri: this.state.selectedImage }}></Card.Image>
-                            )}
 
-                            <Pressable
-                                style={styles.botonAnadirImagen}
-                                //</View>onPress={() => { this.openImagePicker() }} >
-                                onPress={() => this.handleGaleria()}>
-                                <Text>Añadir imagen de perfil</Text>
-                            </Pressable>*/}
-                        </View>
-                        <Card.Divider />
                         <View style={styles.vistaCard}>
                             <Text>Nombre de usuario: {this.state.user.email} </Text>
                             <Card.Image style={styles.imagenUser}
                                 source={{ uri: this.state.ImagenUser }}></Card.Image>
-                            {/* {this.state.mostrarImagen === false ? (
-                                    <Card.Image style={styles.imagenUser}
-                                    source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
+                            {/* {this.state.mostrarImagen === false ? (https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
                                  ) : (
+                                    <Card.Image style={styles.imagenUser}
+                                    source={{ uri: '
                                     // <Card.Image style={styles.imagenUser}
                                     // source={ URLImagen}></Card.Image>
-                                 )}   
-                                                        
-                                    <Pressable  
+                                 )*/
+
+                                <Pressable
                                     style={styles.botonAnadirImagen}
                                     onPress={() => this.handleGaleria()}>
-                                        <Text>Añadir imagen de perfil</Text>
-                                    </Pressable> */}
+                                    <Text>Añadir imagen de perfil</Text>
+                                </Pressable>}
 
                             <Button style={styles.logout}
                                 onPress={() => auth.signOut().then(() => {

@@ -6,6 +6,7 @@ import { Rating } from 'react-native-ratings';
 import { connect } from 'react-redux';
 import { postFavorito, postComentario } from '../redux/ActionCreators';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
+import * as MailComposer from 'expo-mail-composer';
 import * as Calendar from 'expo-calendar';
 const mapStateToProps = state => {
     return {
