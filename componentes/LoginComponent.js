@@ -19,16 +19,9 @@ import { getStorage, ref, putFile, child, put, blob, uploadBytes, getDownloadURL
 //const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const storage = getStorage(app);
-// import 'firebase/auth';
-//import { CardImage } from "@rneui/base/dist/Card/Card.Image";
-// import { Pressable } from "react-native";
-// import * as ImagePicker from 'expo-image-picker';
-// import { Image } from "react-native-elements";
-// import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-
 
 import 'firebase/auth';
-//import { Card } from "react-native-elements";
+
 import { CardImage } from "@rneui/base/dist/Card/Card.Image";
 import { Pressable } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
@@ -51,11 +44,7 @@ function showAlert(title, text) {
     )
 };
 async function openImagePicker() {
-    // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    // if (status !== 'granted') {
-    //   console.log('no tiene permisos para acceder a la galería')
-    // } else {
-    //const result = await ImagePicker.launchImageLibraryAsync();
+   
     let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
@@ -64,14 +53,9 @@ async function openImagePicker() {
     });
     console.log('Resultado en la funcion del picker' + result)
     if (!result.canceled) {
-        //console.log(result.assets[0].uri)
-        //console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
+        
         return (result)
-        //this.setState({ selectedImage: result.assets[0].uri });
-        // if (!result.cancelled) {
-        //   // La imagen fue seleccionada exitosamente
-        //   console.log(result.uri);
-        // } 
+        
     }
     else {
         return (
@@ -80,7 +64,7 @@ async function openImagePicker() {
 
         )
     }
-    // }
+   
 }
 async function guardarImagenEnStorage(uri, nombreArchivo) {
 
@@ -92,67 +76,13 @@ async function guardarImagenEnStorage(uri, nombreArchivo) {
         const storageRef = ref(storage, `users/${nombreArchivo}`);
         uploadBytesResumable(storageRef, blob);
         return (console.log('se ha subido la imagen correctamente!'))
-        //const snapshot = uploadBytesResumable(storageRef, blob);
-        // let URLStorage = await getDownloadURL(snapshot.ref);
-        // return(URLStorage)
-        //console.log('Imagen subida exitosamente');
+        
     } catch (error) {
         console.log('Error al subir la imagen:', error);
     }
-    // const imagenRef = storageRef.child(`users/${nombreArchivo}`);
-    // console.log(imagenRef)
-    // try {
-    //   await imagenRef.putFile(uri);
-    //   console.log('La imagen se ha guardado correctamente en Firebase Storage');
-    // } catch (error) {
-    //   console.error('Error al guardar la imagen en Firebase Storage:', error);
-    // }
+   
 };
-// async function devolverURLImagenUser (nombreFoto) {
-//     console.log(nombreFoto)
-//     const storageRef = ref(storage,`users/${nombreFoto}`);
-//     try{
-//        getDownloadURL(storageRef)
-//        .then ((URLImagen) => {
 
-//             console.log('la URL que devuelve la funcion'+URLImagen)
-//     //    console.log('LA URL OBTENIDA ES: '+URLImagen)
-//             return(URLImagen)
-//         })
-//         .catch((error) => {
-//             // this.setState({ImagenUser: null});
-
-//             console.error('Error al obtener la URL de descarga:', error);
-//         });
-//     } catch (error) {
-//         console.log('Error al obtener la URL de descarga:', error);
-//     }
-// await getDownloadURL(storageRef)
-//     .then ((URLImagen) => {
-
-//         console.log('la URL que devuelve la funcion'+URLImagen)
-//         // console.log(typeof URLImagen);
-//         // const jsonString = JSON.stringify(URLImagen);
-//         // console.log(jsonString)
-//         // console.log(typeof jsonString);
-//         // this.setState({ImagenUser: URLImagen, mostrarImagen: true} )
-//         // return(
-//         //     <Imagen
-//         //     source={{ uri: URLImagen}}
-//         //     >
-
-//         //     </Imagen>
-//         // );
-//         return (URLImagen)
-//     })
-//     .catch((error) => {
-//         // this.setState({ImagenUser: null});
-
-//         console.error('Error al obtener la URL de descarga:', error);
-//     });
-//     console.log('esta la URL del storage del user: '+ URLImagen)
-//     return (URLImagen)
-// }
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -175,16 +105,7 @@ class Login extends React.Component {
             if (user) {
                 console.log("LOGUEADO");
                 this.setState({ user: user });
-                // console.log('LO QUE HAY EN EL ESTADO USER: '+ this.state.user.uid);
-                // const user1 = devolverURLImagenUser(this.state.user.uid);
-                // console.log('la foto del usuario obtenida de la func es:'+user1)
-                // this.setState({ImagenUser: user1 });
-                // console.log(this.state.ImagenUser)
-                // console.log('la url del usario es '+user1)
-                // console.log('el estado de la imagen del usuario es:'+this.state.ImagenUser)
-                // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)});
-                // console.log(this.state.ImagenUser);
-                // this.devolverURLImagenUser(this.state.user.uid)
+                
             } else {
                 console.log("NO LOGUEADO");
             }
@@ -195,8 +116,7 @@ class Login extends React.Component {
     handleLogin = () => {
         if (this.state.signin) {
             this.setState({ signin: false });
-            // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)});
-            // console.log(this.state.ImagenUser);
+           
         } else {
             const { email, password } = this.state;
 
@@ -227,25 +147,29 @@ class Login extends React.Component {
                         //console.log('Este es el uid del usuario registrado' + this.state.user.uid);
                         guardarImagenEnStorage(defaultPhotoUrl, res.user.uid);
 
-                        const avatar = this.devolverURLImagenUser(res.user.uid)
-
-                        updateProfile(res.user, {
-                            photoURL: avatar,
-                        });
-
+                        this.devolverURLImagenUser(res.user.uid)
+                        console.log(this.state.ImagenUser)
+                        // . then(() => {
+                        //     updateProfile(res.user, {
+                        //         photoURL: this.state.ImagenUser,
+                        //     });
+                        // })
+                        
+                        // updateProfile(res.user, {
+                        //     photoURL: this.state.ImagenUser,
+                        // });
+                        // this.setState({ImagenUser: avatar})
                         showAlert("Registrado correctamente");
 
 
-                    })//.then(() => {
-                    //guardarImagenEnStorage(this.state.user.photoURL, this.state.user.uid);
-                    //console.log('Este es el uid del usuario registrado' + this.state.user.uid);
-                    // })
+                    // }).then(() => {
+                    //     console.log( 'estado despues de devolver la imagen'+this.state.ImagenUser)
+                    //     updateProfile(this.state.user.uid, {
+                    //         photoURL: this.state.ImagenUser,
+                    //     });
+                    })
                     .catch(error => { console.log(error); showAlert("Error", error.message) });
-                //.catch((error) => {
-                // if (error.code === AuthErrorCodes.WEAK_PASSWORD) {
-                //  alert("The password is too weak");
-                // }
-                // });
+               
 
             } else {
                 showAlert("Error", "Las contraseñas no coinciden");
@@ -253,54 +177,24 @@ class Login extends React.Component {
         }
     };
 
-    // openImagePicker = async () => {
-    //     // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    //     // if (status !== 'granted') {
-    //     //   console.log('no tiene permisos para acceder a la galería')
-    //     // } else {
-    //         //const result = await ImagePicker.launchImageLibraryAsync();
-    //         let result = await ImagePicker.launchImageLibraryAsync({
-    //             mediaTypes: ImagePicker.MediaTypeOptions.All,
-    //             allowsEditing: true,
-    //             aspect: [4, 3],
-    //             quality: 1,
-    //           });
-    //         console.log(result)
-    //         if (!result.canceled) {
-    //             //console.log(result.assets[0].uri)
-    //             console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
-
-    //             this.setState({ selectedImage: result.assets[0].uri });
-    //             // if (!result.cancelled) {
-    //             //   // La imagen fue seleccionada exitosamente
-    //             //   console.log(result.uri);
-    //             // } 
-    //         }
-    //         else {
-    //             console.log('SE HA CANCELADO LA ACCION')
-    //         } 
-    //     // }
-    // }
+    
     handleGaleria = async () => {
         const Image = await openImagePicker();
         console.log('resultado en el handle: ' + Image)
 
         if (!Image.canceled) {
             this.setState({ selectedImage: Image.assets[0].uri })
-            ///this.setState({mostrarImagen: true})
+        
             console.log('El UID de usuario es: ' + this.state.user.uid)
             console.log('Ahora el estado de selectedimage es la URI: ' + this.state.selectedImage)
 
             try {
 
-                // const URLImage = await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
-                // console.log( 'URL de la imagen guardada en firestore'+URLImage)
                 await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
             } catch (error) {
                 console.log('error de guardar imagen en store. ' + error)
             }
-            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
-            // this.setState({ImagenUser: URLImagen})
+        
 
         } else {
             console.log('handle galeria ha fallado')
@@ -308,92 +202,61 @@ class Login extends React.Component {
 
     }
     devolverURLImagenUser = async (nombreFoto) => {
-        // console.log('Foto en devolver URL'+nombreFoto)
+    
         const storageRef = ref(storage, `users/${nombreFoto}`);
         try {
             getDownloadURL(storageRef)
                 .then((URLImagen) => {
 
-                    // console.log('la URL que devuelve la funcion'+URLImagen)
+                   
                     this.setState({ ImagenUser: URLImagen })
-                    // console.log(this.state.ImagenUser)
-                    //    console.log('LA URL OBTENIDA ES: '+URLImagen)
-                    // return(URLImagen)
+                    
                 })
                 .catch((error) => {
-                    // this.setState({ImagenUser: null});
+                 
 
                     console.error('Error al obtener la URL de descarga:', error);
                 });
         } catch (error) {
-            console.log('Error al obtener la URL de descarga:', error);
+            console.log('Error al obtener la URL de descarga 2:', error);
         }
     }
 
-    // guardarImagenEnStorage = async (uri, nombreArchivo) => {
-
-    //     console.log(nombreArchivo);
-    //     console.log(uri)
-    //     try {
-    //         const response = await fetch(uri);
-    //         const blob = await response.blob();
-    //         const storageRef = ref(storage,`users/${nombreArchivo}`);
-    //         await uploadBytesResumable(storageRef, blob);
-    //         console.log('Imagen subida exitosamente');
-    //     } catch (error) {
-    //         console.log('Error al subir la imagen:', error);
-    //     }
-    //     // const imagenRef = storageRef.child(`users/${nombreArchivo}`);
-    //     // console.log(imagenRef)
-    //     // try {
-    //     //   await imagenRef.putFile(uri);
-    //     //   console.log('La imagen se ha guardado correctamente en Firebase Storage');
-    //     // } catch (error) {
-    //     //   console.error('Error al guardar la imagen en Firebase Storage:', error);
-    //     // }
-    // };
-
+  
     render() {
-        // const {myFoto} = this.state.ImagenUser;
+        
         if (this.state.user) {
-            //console.log('EL USUARIO EN EL RENDER DEL COMPONENTE' + this.state.user.uid)
+            
             this.devolverURLImagenUser(this.state.user.uid)
-            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
-            // console.log('LA URL EN EL REDER'+URLImagen)
-
+            
             return (
                 <View >
                     <Card>
-                        {/* <Text style={styles.logintext}> Bienvenido {this.state.user.email} !</Text> */}
+                        
                         <Card.Title>Bienvenido {this.state.user.email} !</Card.Title>
                         <Card.Divider />
 
                         <View style={styles.vistaCard}>
-                            <Text>Nombre de usuario: {this.state.user.email} </Text>
+                            <Text style={{paddingBottom: '5%'}}>Nombre de usuario: {this.state.user.email} </Text>
                             <Card.Image style={styles.imagenUser}
                                 source={{ uri: this.state.ImagenUser }}></Card.Image>
-                            {/* {this.state.mostrarImagen === false ? (https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
-                                 ) : (
-                                    <Card.Image style={styles.imagenUser}
-                                    source={{ uri: '
-                                    // <Card.Image style={styles.imagenUser}
-                                    // source={ URLImagen}></Card.Image>
-                                 )*/
-
-                                <Pressable
-                                    style={styles.botonAnadirImagen}
-                                    onPress={() => this.handleGaleria()}>
-                                    <Text>Añadir imagen de perfil</Text>
-                                </Pressable>}
-
-                            <Button style={styles.logout}
-                                onPress={() => auth.signOut().then(() => {
-                                    console.log("SignOut OK");
-                                }).catch((error) => {
-                                    console.log("SignOut ERROR");
-                                })}
-                                title="Salir"
-                                color="#f70000" />
+                                <View style={{paddingTop: '10%', flexDirection:'row'}}>
+                                    <Pressable 
+                                        style={styles.botonAnadirImagen}
+                                        onPress={() => this.handleGaleria()}>
+                                        <Text>Añadir imagen de perfil</Text>
+                                    </Pressable>
+                                   
+                                     <Button 
+                                    onPress={() => auth.signOut().then(() => {
+                                        console.log("SignOut OK");
+                                    }).catch((error) => {
+                                        console.log("SignOut ERROR");
+                                    })}
+                                    title="Salir"
+                                    color="#f70000" /> 
+                                </View>
+                            
                         </View>
                     </Card>
                 </View>
@@ -522,6 +385,8 @@ const styles = StyleSheet.create({
     },
     vistaCard: {
         flexDirection: 'column',
+        alignContent: 'center',
+        alignItems:'center',
     },
     vistaCard2: {
         flexDirection: 'row'
@@ -533,11 +398,16 @@ const styles = StyleSheet.create({
         marginBottom: '5%',
         borderRadius: '20%',
         maxWidth: '50%',
+      
     },
     imagenUser: {
-        width: 100,
-        height: 100
-    }
+        width: 200,
+        height: 200,
+        paddingBottom: '10%',
+    }, 
+    logout: {
+        backgroundColor: 'red'
+    },
 
 })
 

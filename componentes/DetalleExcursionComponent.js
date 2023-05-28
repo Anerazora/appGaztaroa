@@ -245,49 +245,7 @@ class DetalleExcursion extends Component {
         }
     };
 
-    crearEventoYApuntarse(excursionFecha, excursionNombre) {
-        this.crearEventoCalendario(excursionFecha, excursionNombre); // Llama al método para crear el evento en el calendario
-        // Agrega aquí la lógica para apuntarse a la excursión
-        this.toggleModal2(); // Cierra el modal después de realizar las acciones necesarias
-    }
-    crearEventoCalendario = async (excursionFecha, excursionNombre) => {
-        console.log(excursionFecha.ano)
-        console.log(excursionNombre)
-        const { status } = await Calendar.requestCalendarPermissionsAsync();
-
-        if (status === 'granted') {
-            const calendarId = await Calendar.getDefaultCalendarAsync();
-            console.log(calendarId)
-            console.log(calendarId.id)
-            if (calendarId.id) {
-                console.log('Tiene permisos para acceder al calendario');
-                const startDate = new Date(
-                    excursionFecha.ano,
-                    excursionFecha.mes,
-                    excursionFecha.dia,
-                    excursionFecha.hora,
-                    excursionFecha.minutos,
-                    excursionFecha.seg
-                )
-                const title = 'Excursion de Gaztaroa: ' + excursionNombre
-                const eventDetails = {
-                    title: title,
-                    startDate: startDate,
-                    endDate: new Date(startDate.getTime() + 60 * 60 * 1000), // Evento de una hora de duración
-                    location: 'Ubicación del evento',
-                    notes: 'Notas adicionales',
-                };
-
-                await Calendar.createEventAsync(calendarId.id, eventDetails);
-                console.log('Evento creado en el calendario');
-
-            } else {
-                console.log('No se pudo obtener el ID del calendario');
-            }
-        } else {
-            console.log('No se otorgaron los permisos para acceder al calendario');
-        }
-    };
+   
 
     render() {
         const { excursionId, excursionFecha, excursionNombre } = this.props.route.params;
@@ -374,11 +332,11 @@ class DetalleExcursion extends Component {
                 >
                     <View style={styles.vista}>
                         <Text style={styles.textoModal2}>¿Seguro que quiere apuntarse a la excursión?</Text>
-                        <Pressable style={styles.botonAceptar}
+                        {/* <Pressable style={styles.botonAceptar}
                             onPress={() => { this.toggleModal2(); this.resetModal2() }}
                         >
                             <Text style={styles.textoBotonModal}>ACEPTAR</Text>
-                        </Pressable>
+                        </Pressable> */}
 
                         <Pressable style={styles.botonCancelar}
                             onPress={() => { this.toggleModal2(); this.resetModal2() }}
@@ -386,11 +344,11 @@ class DetalleExcursion extends Component {
                             <Text style={styles.textoBotonModal}>CANCELAR</Text>
                         </Pressable>
 
-                        <Pressable style={styles.botonModal}
+                         <Pressable style={styles.botonAceptar}
                             onPress={() => this.crearEventoYApuntarse(excursionFecha, excursionNombre)}
                         >
                             <Text style={styles.textoBotonModal}>ACEPTAR Y AÑADIR AL CALENDARIO</Text>
-                        </Pressable>
+                        </Pressable> 
                     </View>
                 </Modal>
             </ScrollView>
