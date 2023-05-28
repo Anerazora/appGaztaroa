@@ -1,10 +1,14 @@
-import { initializeApp } from "firebase/app";
+//import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import firebase from 'firebase/app';
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert, Imagen } from 'react-native';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
-import { firebaseConfig } from '../comun/firebaseConfig';
+//import { firebaseConfig } from '../comun/firebaseConfig';
+import app from "../firebaseConfig";
 import React, { Component } from 'react';
+import { Card } from "react-native-elements";
+import 'firebase/storage';
+import { getStorage, ref, putFile, child, put, blob, uploadBytes, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 //import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
 //import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
 //import firebase from 'firebase/app';
@@ -12,9 +16,16 @@ import React, { Component } from 'react';
 //import { firebaseConfig } from '../comun/firebaseConfig';
 //import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 //import { initializeApp } from "firebase/app";
-const app = initializeApp(firebaseConfig);
+//const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const storage = getStorage(app);
 import 'firebase/auth';
+//import { CardImage } from "@rneui/base/dist/Card/Card.Image";
+import { Pressable } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from "react-native-elements";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+
 
 
 
@@ -32,6 +43,112 @@ function showAlert(title, text) {
     )
 };
 
+async function openImagePicker() {
+    // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    // if (status !== 'granted') {
+    //   console.log('no tiene permisos para acceder a la galería')
+    // } else {
+    //const result = await ImagePicker.launchImageLibraryAsync();
+    let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+    });
+    console.log('Resultado en la funcion del picker' + result)
+    if (!result.canceled) {
+        //console.log(result.assets[0].uri)
+        //console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
+        return (result)
+        //this.setState({ selectedImage: result.assets[0].uri });
+        // if (!result.cancelled) {
+        //   // La imagen fue seleccionada exitosamente
+        //   console.log(result.uri);
+        // } 
+    }
+    else {
+        //return (console.log('SE HA CANCELADO LA ACCION'))
+        return (
+            console.log('SE HA CANCELADO LA ACCION')
+            //<View></View>
+
+        )
+    }
+    // }
+}
+
+async function guardarImagenEnStorage(uri, nombreArchivo) {
+
+    console.log('el nombre del archivo que recibe la funcion es: ' + nombreArchivo);
+    console.log('la uri que recibe la funcion es: ' + uri)
+    try {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const storageRef = ref(storage, `users/${nombreArchivo}`);
+        uploadBytesResumable(storageRef, blob);
+        return (console.log('se ha subido la imagen correctamente!'))
+        //const snapshot = uploadBytesResumable(storageRef, blob);
+        // let URLStorage = await getDownloadURL(snapshot.ref);
+        // return(URLStorage)
+        //console.log('Imagen subida exitosamente');
+    } catch (error) {
+        console.log('Error al subir la imagen:', error);
+    }
+    // const imagenRef = storageRef.child(`users/${nombreArchivo}`);
+    // console.log(imagenRef)
+    // try {
+    //   await imagenRef.putFile(uri);
+    //   console.log('La imagen se ha guardado correctamente en Firebase Storage');
+    // } catch (error) {
+    //   console.error('Error al guardar la imagen en Firebase Storage:', error);
+    // }
+};
+// async function devolverURLImagenUser (nombreFoto) {
+//     console.log(nombreFoto)
+//     const storageRef = ref(storage,`users/${nombreFoto}`);
+//     try{
+//        getDownloadURL(storageRef)
+//        .then ((URLImagen) => {
+
+//             console.log('la URL que devuelve la funcion'+URLImagen)
+//     //    console.log('LA URL OBTENIDA ES: '+URLImagen)
+//             return(URLImagen)
+//         })
+//         .catch((error) => {
+//        
+
+//             console.error('Error al obtener la URL de descarga:', error);
+//         });
+//     } catch (error) {
+//         console.log('Error al obtener la URL de descarga:', error);
+//     }
+// await getDownloadURL(storageRef)
+//     .then ((URLImagen) => {
+
+//         console.log('la URL que devuelve la funcion'+URLImagen)
+//         // console.log(typeof URLImagen);
+//         // const jsonString = JSON.stringify(URLImagen);
+//         // console.log(jsonString)
+//         // console.log(typeof jsonString);
+//         // this.setState({ImagenUser: URLImagen, mostrarImagen: true} )
+//         // return(
+//         //     <Imagen
+//         //     source={{ uri: URLImagen}}
+//         //     >
+
+//         //     </Imagen>
+//         // );
+//         return (URLImagen)
+//     })
+//     .catch((error) => {
+//         // this.setState({ImagenUser: null});
+
+//         console.error('Error al obtener la URL de descarga:', error);
+//     });
+//     console.log('esta la URL del storage del user: '+ URLImagen)
+//     return (URLImagen)
+//}
+
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -42,6 +159,10 @@ class Login extends React.Component {
             password: '',
             password2: '',
             signin: false,
+            selectedImage: null,
+            mostrarImagen: false,
+            ImagenUser: null,
+
         }
     }
 
@@ -50,6 +171,16 @@ class Login extends React.Component {
             if (user) {
                 console.log("LOGUEADO");
                 this.setState({ user: user });
+                console.log('LO QUE HAY EN EL ESTADO USER: ' + this.state.user.uid);
+                // const user1 = devolverURLImagenUser(this.state.user.uid);
+                // console.log('la foto del usuario obtenida de la func es:'+user1)
+                // this.setState({ImagenUser: user1 });
+                // console.log(this.state.ImagenUser)
+                // console.log('la url del usario es '+user1)
+                // console.log('el estado de la imagen del usuario es:'+this.state.ImagenUser)
+                // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)});
+                // console.log(this.state.ImagenUser);
+                // this.devolverURLImagenUser(this.state.user.uid)
             } else {
                 console.log("NO LOGUEADO");
             }
@@ -59,7 +190,8 @@ class Login extends React.Component {
     handleLogin = () => {
         if (this.state.signin) {
             this.setState({ signin: false });
-
+            // this.setState({ImagenUser: devolverURLImagenUser(this.state.user.uid)});
+            // console.log(this.state.ImagenUser);
         } else {
             const { email, password } = this.state;
 
@@ -69,7 +201,8 @@ class Login extends React.Component {
     };
 
     handleSignIn = () => {
-        console.log(this.state.signin);
+        //console.log(this.state.signin);
+        console.log('Esto es la variable sigin' + this.state.signin);
 
         if (!this.state.signin) {
             this.setState({ signin: true });
@@ -97,20 +230,148 @@ class Login extends React.Component {
         }
     };
 
+    // openImagePicker = async () => {
+    //     // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    //     // if (status !== 'granted') {
+    //     //   console.log('no tiene permisos para acceder a la galería')
+    //     // } else {
+    //         //const result = await ImagePicker.launchImageLibraryAsync();
+    //         let result = await ImagePicker.launchImageLibraryAsync({
+    //             mediaTypes: ImagePicker.MediaTypeOptions.All,
+    //             allowsEditing: true,
+    //             aspect: [4, 3],
+    //             quality: 1,
+    //           });
+    //         console.log(result)
+    //         if (!result.canceled) {
+    //             //console.log(result.assets[0].uri)
+    //             console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
+
+    //             this.setState({ selectedImage: result.assets[0].uri });
+    //             // if (!result.cancelled) {
+    //             //   // La imagen fue seleccionada exitosamente
+    //             //   console.log(result.uri);
+    //             // } 
+    //         }
+    //         else {
+    //             console.log('SE HA CANCELADO LA ACCION')
+    //         } 
+    //     // }
+    // }
+    handleGaleria = async () => {
+        const Image = await openImagePicker();
+        console.log('resultado en el handle: ' + Image)
+        if (!Image.canceled) {
+            this.setState({ selectedImage: Image.assets[0].uri })
+            //this.setState({ mostrarImagen: true })
+            console.log('El UID de usuario es: ' + this.state.user.uid)
+            console.log('Ahora el estado de selectedimage es la URI: ' + this.state.selectedImage)
+
+            try {
+
+                // const URLImage = await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
+                // console.log( 'URL de la imagen guardada en firestore'+URLImage)
+                await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
+            } catch (error) {
+                console.log('error de guardar imagen en store. ' + error)
+            }
+            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
+            // this.setState({ImagenUser: URLImagen})
+        } else {
+            console.log('handle galeria ha fallado')
+        }
+    }
+
+    devolverURLImagenUser = async (nombreFoto) => {
+        // console.log('Foto en devolver URL'+nombreFoto)
+        const storageRef = ref(storage, `users/${nombreFoto}`);
+        try {
+            getDownloadURL(storageRef)
+                .then((URLImagen) => {
+
+                    // console.log('la URL que devuelve la funcion'+URLImagen)
+                    this.setState({ ImagenUser: URLImagen })
+                    // console.log(this.state.ImagenUser)
+                    //    console.log('LA URL OBTENIDA ES: '+URLImagen)
+                    // return(URLImagen)
+                })
+                .catch((error) => {
+                    // this.setState({ImagenUser: null});
+
+                    console.error('Error al obtener la URL de descarga:', error);
+                });
+        } catch (error) {
+            console.log('Error al obtener la URL de descarga:', error);
+        }
+    }
+
+
+    // guardarImagenEnStorage = async (uri, nombreArchivo) => {
+
+    //     console.log(nombreArchivo);
+    //     console.log(uri)
+    //     try {
+    //         const response = await fetch(uri);
+    //         const blob = await response.blob();
+    //         const storageRef = ref(storage,`users/${nombreArchivo}`);
+    //         await uploadBytesResumable(storageRef, blob);
+    //         console.log('Imagen subida exitosamente');
+    //     } catch (error) {
+    //         console.log('Error al subir la imagen:', error);
+    //     }
+    //     // const imagenRef = storageRef.child(`users/${nombreArchivo}`);
+    //     // console.log(imagenRef)
+    //     // try {
+    //     //   await imagenRef.putFile(uri);
+    //     //   console.log('La imagen se ha guardado correctamente en Firebase Storage');
+    //     // } catch (error) {
+    //     //   console.error('Error al guardar la imagen en Firebase Storage:', error);
+    //     // }
+    // };
+
     render() {
+        // const {myFoto} = this.state.ImagenUser;
         if (this.state.user) {
+            console.log('EL USUARIO EN EL RENDER DEL COMPONENTE' + this.state.user.uid)
+            this.devolverURLImagenUser(this.state.user.uid)
+            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
+            // console.log('LA URL EN EL REDER'+URLImagen)
 
             return (
-                <View style={styles.container}>
-                    <Text style={styles.logintext}> Bienvenido {this.state.user.email} !</Text>
-                    <Button style={styles.logout}
-                        onPress={() => auth.signOut().then(() => {
-                            console.log("SignOut OK");
-                        }).catch((error) => {
-                            console.log("SignOut ERROR");
-                        })}
-                        title="Salir"
-                        color="#f70000" />
+                <View >
+                    <Card>
+                        {/* <Text style={styles.logintext}> Bienvenido {this.state.user.email} !</Text> */}
+                        <Card.Title>Bienvenido {this.state.user.email} !</Card.Title>
+                        <Card.Divider />
+                        <View style={styles.vistaCard}>
+                            <Text>Nombre de usuario: {this.state.user.email} </Text>
+                            <Card.Image style={styles.imagenUser}
+                                source={{ uri: this.state.ImagenUser }}></Card.Image>
+                            {/* {this.state.mostrarImagen === false ? (
+                                <Card.Image style={styles.imagenUser}
+                                    source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/appgaztaroa-53ec5.appspot.com/o/user.jpeg?alt=media&token=351a3536-17b1-49fb-baa8-09720856102a' }}></Card.Image>
+                            ) : (
+                                //<Card.Image style={styles.imagenUser}
+                                    //source={{ uri: this.state.selectedImage }}></Card.Image>
+                            )}
+
+                            <Pressable
+                                style={styles.botonAnadirImagen}
+                                //</View>onPress={() => { this.openImagePicker() }} >
+                                onPress={() => this.handleGaleria()}>
+                                <Text>Añadir imagen de perfil</Text>
+                            </Pressable>*/}
+
+                            <Button style={styles.logout}
+                                onPress={() => auth.signOut().then(() => {
+                                    console.log("SignOut OK");
+                                }).catch((error) => {
+                                    console.log("SignOut ERROR");
+                                })}
+                                title="Salir"
+                                color="#f70000" />
+                        </View>
+                    </Card>
                 </View>
             )
 
@@ -235,6 +496,24 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+    vistaCard: {
+        flexDirection: 'column',
+    },
+    vistaCard2: {
+        flexDirection: 'row'
+    },
+    botonAnadirImagen: {
+        backgroundColor: '#b2dafa',
+        alignSelf: 'center',
+        padding: '4%',
+        marginBottom: '5%',
+        borderRadius: '20%',
+        maxWidth: '50%',
+    },
+    imagenUser: {
+        width: 100,
+        height: 100
+    }
 
 })
 

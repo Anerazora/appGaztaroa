@@ -245,7 +245,7 @@ function DrawerNavegador(props) {
             <Icon
               name='info-circle'
               type='font-awesome'
-              size={24}
+              size={25}
               color={tintColor}
             />
           )
@@ -269,7 +269,7 @@ function DrawerNavegador(props) {
             <Icon
               name='address-card'
               type='font-awesome'
-              size={24}
+              size={20}
               color={tintColor}
             />
           )
@@ -281,7 +281,7 @@ function DrawerNavegador(props) {
             <Icon
               name='user'
               type='font-awesome'
-              size={24}
+              size={31}
               color={tintColor}
             />
           )
@@ -293,7 +293,7 @@ function DrawerNavegador(props) {
             <Icon
               name='map-marker'
               type='font-awesome'
-              size={24}
+              size={38}
               color={tintColor}
             />
           )

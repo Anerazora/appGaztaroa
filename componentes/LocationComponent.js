@@ -30,6 +30,7 @@ export default function LocationGps() {
     if (errorMsg) {
         text = errorMsg;
     } else if (location) {
+        //text = JSON.stringify(location);
         const speed = location.coords.speed;
         const longitude = location.coords.longitude;
         const latitude = location.coords.latitude;
@@ -47,20 +48,22 @@ export default function LocationGps() {
         console.log('Altitude:', altitude);
         console.log('Altitude Accuracy:', altitudeAccuracy);
         console.log('Timestamp:', timestamp);
+
+        return (
+            <View style={styles.container}>
+                <Text style={styles.label}>DATOS DE GEOLOCALIZACION</Text>
+                <Text style={styles.paragraph}>Speed: {location?.coords?.speed}</Text>
+                <Text style={styles.paragraph}>Longitude: {location?.coords?.longitude}</Text>
+                <Text style={styles.paragraph}>Latitude: {location?.coords?.latitude}</Text>
+                <Text style={styles.paragraph}>Accuracy: {location?.coords?.accuracy}</Text>
+                <Text style={styles.paragraph}>Heading: {location?.coords?.heading}</Text>
+                <Text style={styles.paragraph}>Altitude: {location?.coords?.altitude}</Text>
+                <Text style={styles.paragraph}>Altitude Accuracy: {location?.coords?.altitudeAccuracy}</Text>
+            </View>
+        );
     }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.label}>DATOS DE GEOLOCALIZACION</Text>
-            <Text style={styles.paragraph}>Speed: {location?.coords?.speed}</Text>
-            <Text style={styles.paragraph}>Longitude: {location?.coords?.longitude}</Text>
-            <Text style={styles.paragraph}>Latitude: {location?.coords?.latitude}</Text>
-            <Text style={styles.paragraph}>Accuracy: {location?.coords?.accuracy}</Text>
-            <Text style={styles.paragraph}>Heading: {location?.coords?.heading}</Text>
-            <Text style={styles.paragraph}>Altitude: {location?.coords?.altitude}</Text>
-            <Text style={styles.paragraph}>Altitude Accuracy: {location?.coords?.altitudeAccuracy}</Text>
-        </View>
-    );
+
 }
 
 const styles = StyleSheet.create({
