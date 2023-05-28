@@ -209,38 +209,38 @@ class DetalleExcursion extends Component {
         console.log(excursionFecha.ano)
         console.log(excursionNombre)
         const { status } = await Calendar.requestCalendarPermissionsAsync();
-      
+
         if (status === 'granted') {
-          const calendarId = await Calendar.getDefaultCalendarAsync();
-          console.log(calendarId)
-          console.log(calendarId.id)
-          if (calendarId.id) {
-            console.log('Tiene permisos para acceder al calendario');
-            const startDate = new Date(
-                excursionFecha.ano, 
-                excursionFecha.mes, 
-                excursionFecha.dia, 
-                excursionFecha.hora,
-                excursionFecha.minutos, 
-                excursionFecha.seg
-            )
-            const title = 'Excursion de Gaztaroa: '+excursionNombre
-            const eventDetails = {
-              title: title,
-              startDate: startDate,
-              endDate: new Date(startDate.getTime() + 60 * 60 * 1000), // Evento de una hora de duración
-              location: 'Ubicación del evento',
-              notes: 'Notas adicionales',
-            };
-      
-            await Calendar.createEventAsync(calendarId.id, eventDetails);
-            console.log('Evento creado en el calendario');
-           
-          } else {
-            console.log('No se pudo obtener el ID del calendario');
-          }
+            const calendarId = await Calendar.getDefaultCalendarAsync();
+            console.log(calendarId)
+            console.log(calendarId.id)
+            if (calendarId.id) {
+                console.log('Tiene permisos para acceder al calendario');
+                const startDate = new Date(
+                    excursionFecha.ano,
+                    excursionFecha.mes,
+                    excursionFecha.dia,
+                    excursionFecha.hora,
+                    excursionFecha.minutos,
+                    excursionFecha.seg
+                )
+                const title = 'Excursion de Gaztaroa: ' + excursionNombre
+                const eventDetails = {
+                    title: title,
+                    startDate: startDate,
+                    endDate: new Date(startDate.getTime() + 60 * 60 * 1000), // Evento de una hora de duración
+                    location: 'Ubicación del evento',
+                    notes: 'Notas adicionales',
+                };
+
+                await Calendar.createEventAsync(calendarId.id, eventDetails);
+                console.log('Evento creado en el calendario');
+
+            } else {
+                console.log('No se pudo obtener el ID del calendario');
+            }
         } else {
-          console.log('No se otorgaron los permisos para acceder al calendario');
+            console.log('No se otorgaron los permisos para acceder al calendario');
         }
     };
 
@@ -289,7 +289,7 @@ class DetalleExcursion extends Component {
     };
 
     render() {
-        const { excursionId , excursionFecha, excursionNombre} = this.props.route.params;
+        const { excursionId, excursionFecha, excursionNombre } = this.props.route.params;
         // console.log(excursionFecha)
         // console.log(excursionFecha.ano)
         const comentarios = Object.keys(this.props.comentarios.comentarios)
@@ -302,7 +302,7 @@ class DetalleExcursion extends Component {
                     favorita={this.props.favoritos.favoritos.some(el => el === excursionId)}
                     onPress={() => this.marcarFavorito(excursionId)}
                     onPressComentario={() => this.toggleModal()}
-                    onPressApuntate = { () => this.toggleModal2(excursionFecha, excursionNombre)}
+                    onPressApuntate={() => this.toggleModal2(excursionFecha, excursionNombre)}
                 />
                 <RenderComentario
                     comentarios={comentarios}
@@ -385,8 +385,8 @@ class DetalleExcursion extends Component {
                             <Text style={styles.textoBotonModal}>CANCELAR</Text>
                         </Pressable>
 
-                        <Pressable style= {styles.botonModal}
-                         onPress={() => this.crearEventoYApuntarse(excursionFecha, excursionNombre)}
+                        <Pressable style={styles.botonModal}
+                            onPress={() => this.crearEventoYApuntarse(excursionFecha, excursionNombre)}
                         >
                             <Text style={styles.textoBotonModal}>ACEPTAR Y AÑADIR AL CALENDARIO</Text>
                         </Pressable>
