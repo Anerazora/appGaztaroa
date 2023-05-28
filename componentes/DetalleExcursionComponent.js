@@ -6,10 +6,14 @@ import { Rating } from 'react-native-ratings';
 import { connect } from 'react-redux';
 import { postFavorito, postComentario } from '../redux/ActionCreators';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
+<<<<<<< HEAD
 import * as MailComposer from 'expo-mail-composer';
 import * as Calendar from 'expo-calendar';
 
 
+=======
+import * as Calendar from 'expo-calendar';
+>>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
 const mapStateToProps = state => {
     return {
         actividades: state.actividades,
@@ -203,6 +207,49 @@ class DetalleExcursion extends Component {
     marcarFavorito(excursionId) {
         this.props.postFavorito(excursionId);
     }
+    crearEventoYApuntarse(excursionFecha, excursionNombre) {
+        this.crearEventoCalendario(excursionFecha, excursionNombre); // Llama al método para crear el evento en el calendario
+        // Agrega aquí la lógica para apuntarse a la excursión
+        this.toggleModal2(); // Cierra el modal después de realizar las acciones necesarias
+    }
+    crearEventoCalendario = async (excursionFecha, excursionNombre) => {
+        console.log(excursionFecha.ano)
+        console.log(excursionNombre)
+        const { status } = await Calendar.requestCalendarPermissionsAsync();
+      
+        if (status === 'granted') {
+          const calendarId = await Calendar.getDefaultCalendarAsync();
+          console.log(calendarId)
+          console.log(calendarId.id)
+          if (calendarId.id) {
+            console.log('Tiene permisos para acceder al calendario');
+            const startDate = new Date(
+                excursionFecha.ano, 
+                excursionFecha.mes, 
+                excursionFecha.dia, 
+                excursionFecha.hora,
+                excursionFecha.minutos, 
+                excursionFecha.seg
+            )
+            const title = 'Excursion de Gaztaroa: '+excursionNombre
+            const eventDetails = {
+              title: title,
+              startDate: startDate,
+              endDate: new Date(startDate.getTime() + 60 * 60 * 1000), // Evento de una hora de duración
+              location: 'Ubicación del evento',
+              notes: 'Notas adicionales',
+            };
+      
+            await Calendar.createEventAsync(calendarId.id, eventDetails);
+            console.log('Evento creado en el calendario');
+           
+          } else {
+            console.log('No se pudo obtener el ID del calendario');
+          }
+        } else {
+          console.log('No se otorgaron los permisos para acceder al calendario');
+        }
+    };
 
     crearEventoYApuntarse(excursionFecha, excursionNombre) {
         this.crearEventoCalendario(excursionFecha, excursionNombre); // Llama al método para crear el evento en el calendario
@@ -249,8 +296,14 @@ class DetalleExcursion extends Component {
     };
 
     render() {
+<<<<<<< HEAD
         //const { excursionId } = this.props.route.params;
         const { excursionId, excursionFecha, excursionNombre } = this.props.route.params;
+=======
+        const { excursionId , excursionFecha, excursionNombre} = this.props.route.params;
+        // console.log(excursionFecha)
+        // console.log(excursionFecha.ano)
+>>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
         const comentarios = Object.keys(this.props.comentarios.comentarios)
             .map(key => this.props.comentarios.comentarios[key])
             .filter(comment => comment.excursionId == excursionId)
@@ -261,8 +314,12 @@ class DetalleExcursion extends Component {
                     favorita={this.props.favoritos.favoritos.some(el => el === excursionId)}
                     onPress={() => this.marcarFavorito(excursionId)}
                     onPressComentario={() => this.toggleModal()}
+<<<<<<< HEAD
                     //onPressApuntate={() => this.toggleModal2()}
                     onPressApuntate={() => this.toggleModal2(excursionFecha, excursionNombre)}
+=======
+                    onPressApuntate = { () => this.toggleModal2(excursionFecha, excursionNombre)}
+>>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
                 />
                 <RenderComentario
                     comentarios={comentarios}
@@ -345,9 +402,14 @@ class DetalleExcursion extends Component {
                             <Text style={styles.textoBotonModal}>CANCELAR</Text>
                         </Pressable>
 
+<<<<<<< HEAD
                         <Pressable style={styles.botonModal}
                             //onPress={() => { this.toggleModal2(); this.resetModal2() }}
                             onPress={() => this.crearEventoYApuntarse(excursionFecha, excursionNombre)}
+=======
+                        <Pressable style= {styles.botonModal}
+                         onPress={() => this.crearEventoYApuntarse(excursionFecha, excursionNombre)}
+>>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
                         >
                             <Text style={styles.textoBotonModal}>ACEPTAR Y AÑADIR AL CALENDARIO</Text>
                         </Pressable>
