@@ -38,10 +38,6 @@ class Calendario extends Component {
                 return (
                     <ListItem
                         key={index}
-<<<<<<< HEAD
-                        //onPress={() => navigate('DetalleExcursion', { excursionId: item.id })}
-=======
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
                         onPress={() => navigate('DetalleExcursion', { excursionId: item.id, excursionFecha: item.fecha, excursionNombre: item.nombre })}
                         bottomDivider>
                         <Avatar source={{ uri: item.imagen }} />

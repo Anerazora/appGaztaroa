@@ -8,11 +8,7 @@ import app from "../firebaseConfig";
 import React, { Component } from 'react';
 import { Card } from "react-native-elements";
 import 'firebase/storage';
-<<<<<<< HEAD
-import { getStorage, ref, putFile, child, put, blob, uploadBytes, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-=======
 import { getStorage, ref, putFile, child, put, blob, uploadBytes, getDownloadURL, uploadBytesResumable} from "firebase/storage";
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
 //import { View, TextInput, StyleSheet, TouchableOpacity, Text, Button, Alert } from 'react-native';
 //import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
 //import firebase from 'firebase/app';
@@ -21,21 +17,15 @@ import { getStorage, ref, putFile, child, put, blob, uploadBytes, getDownloadURL
 //import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 //import { initializeApp } from "firebase/app";
 //const app = initializeApp(firebaseConfig);
-<<<<<<< HEAD
 const auth = getAuth(app);
 const storage = getStorage(app);
-import 'firebase/auth';
+// import 'firebase/auth';
 //import { CardImage } from "@rneui/base/dist/Card/Card.Image";
-import { Pressable } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
-import { Image } from "react-native-elements";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+// import { Pressable } from "react-native";
+// import * as ImagePicker from 'expo-image-picker';
+// import { Image } from "react-native-elements";
+// import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
-=======
-
-const auth = getAuth(app);
-const storage = getStorage (app);
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
 
 import 'firebase/auth';
 //import { Card } from "react-native-elements";
@@ -150,114 +140,6 @@ async function guardarImagenEnStorage (uri, nombreArchivo) {
     //         //     source={{ uri: URLImagen}}
     //         //     >
 
-<<<<<<< HEAD
-async function openImagePicker() {
-    // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    // if (status !== 'granted') {
-    //   console.log('no tiene permisos para acceder a la galería')
-    // } else {
-    //const result = await ImagePicker.launchImageLibraryAsync();
-    let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-    });
-    console.log('Resultado en la funcion del picker' + result)
-    if (!result.canceled) {
-        //console.log(result.assets[0].uri)
-        //console.log(result.assets && result.assets.length > 0 ? result.assets[0].uri : 'No se seleccionó ninguna imagen');
-        return (result)
-        //this.setState({ selectedImage: result.assets[0].uri });
-        // if (!result.cancelled) {
-        //   // La imagen fue seleccionada exitosamente
-        //   console.log(result.uri);
-        // } 
-    }
-    else {
-        //return (console.log('SE HA CANCELADO LA ACCION'))
-        return (
-            console.log('SE HA CANCELADO LA ACCION')
-            //<View></View>
-
-        )
-    }
-    // }
-}
-
-async function guardarImagenEnStorage(uri, nombreArchivo) {
-
-    console.log('el nombre del archivo que recibe la funcion es: ' + nombreArchivo);
-    console.log('la uri que recibe la funcion es: ' + uri)
-    try {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        const storageRef = ref(storage, `users/${nombreArchivo}`);
-        uploadBytesResumable(storageRef, blob);
-        return (console.log('se ha subido la imagen correctamente!'))
-        //const snapshot = uploadBytesResumable(storageRef, blob);
-        // let URLStorage = await getDownloadURL(snapshot.ref);
-        // return(URLStorage)
-        //console.log('Imagen subida exitosamente');
-    } catch (error) {
-        console.log('Error al subir la imagen:', error);
-    }
-    // const imagenRef = storageRef.child(`users/${nombreArchivo}`);
-    // console.log(imagenRef)
-    // try {
-    //   await imagenRef.putFile(uri);
-    //   console.log('La imagen se ha guardado correctamente en Firebase Storage');
-    // } catch (error) {
-    //   console.error('Error al guardar la imagen en Firebase Storage:', error);
-    // }
-};
-// async function devolverURLImagenUser (nombreFoto) {
-//     console.log(nombreFoto)
-//     const storageRef = ref(storage,`users/${nombreFoto}`);
-//     try{
-//        getDownloadURL(storageRef)
-//        .then ((URLImagen) => {
-
-//             console.log('la URL que devuelve la funcion'+URLImagen)
-//     //    console.log('LA URL OBTENIDA ES: '+URLImagen)
-//             return(URLImagen)
-//         })
-//         .catch((error) => {
-//        
-
-//             console.error('Error al obtener la URL de descarga:', error);
-//         });
-//     } catch (error) {
-//         console.log('Error al obtener la URL de descarga:', error);
-//     }
-// await getDownloadURL(storageRef)
-//     .then ((URLImagen) => {
-
-//         console.log('la URL que devuelve la funcion'+URLImagen)
-//         // console.log(typeof URLImagen);
-//         // const jsonString = JSON.stringify(URLImagen);
-//         // console.log(jsonString)
-//         // console.log(typeof jsonString);
-//         // this.setState({ImagenUser: URLImagen, mostrarImagen: true} )
-//         // return(
-//         //     <Imagen
-//         //     source={{ uri: URLImagen}}
-//         //     >
-
-//         //     </Imagen>
-//         // );
-//         return (URLImagen)
-//     })
-//     .catch((error) => {
-//         // this.setState({ImagenUser: null});
-
-//         console.error('Error al obtener la URL de descarga:', error);
-//     });
-//     console.log('esta la URL del storage del user: '+ URLImagen)
-//     return (URLImagen)
-//}
-
-=======
     //         //     </Imagen>
     //         // );
     //         return (URLImagen)
@@ -270,7 +152,6 @@ async function guardarImagenEnStorage(uri, nombreArchivo) {
             //     console.log('esta la URL del storage del user: '+ URLImagen)
 //     return (URLImagen)
 // }
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -284,10 +165,6 @@ class Login extends React.Component {
             selectedImage: null,
             mostrarImagen: false,
             ImagenUser: null,
-<<<<<<< HEAD
-
-=======
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
         }
     }
 
@@ -296,11 +173,7 @@ class Login extends React.Component {
             if (user) {
                 console.log("LOGUEADO");
                 this.setState({ user: user });
-<<<<<<< HEAD
-                console.log('LO QUE HAY EN EL ESTADO USER: ' + this.state.user.uid);
-=======
                 // console.log('LO QUE HAY EN EL ESTADO USER: '+ this.state.user.uid);
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
                 // const user1 = devolverURLImagenUser(this.state.user.uid);
                 // console.log('la foto del usuario obtenida de la func es:'+user1)
                 // this.setState({ImagenUser: user1 });
@@ -331,12 +204,7 @@ class Login extends React.Component {
     };
 
     handleSignIn = () => {
-<<<<<<< HEAD
-        //console.log(this.state.signin);
-        console.log('Esto es la variable sigin' + this.state.signin);
-=======
         console.log('Esto es la variable sigin'+this.state.signin);
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
 
         if (!this.state.signin) {
             this.setState({ signin: true });
@@ -394,48 +262,6 @@ class Login extends React.Component {
     // }
     handleGaleria = async () => {
         const Image = await openImagePicker();
-<<<<<<< HEAD
-        console.log('resultado en el handle: ' + Image)
-        if (!Image.canceled) {
-            this.setState({ selectedImage: Image.assets[0].uri })
-            //this.setState({ mostrarImagen: true })
-            console.log('El UID de usuario es: ' + this.state.user.uid)
-            console.log('Ahora el estado de selectedimage es la URI: ' + this.state.selectedImage)
-
-            try {
-
-                // const URLImage = await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
-                // console.log( 'URL de la imagen guardada en firestore'+URLImage)
-                await guardarImagenEnStorage(this.state.selectedImage, this.state.user.uid)
-            } catch (error) {
-                console.log('error de guardar imagen en store. ' + error)
-            }
-            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
-            // this.setState({ImagenUser: URLImagen})
-        } else {
-            console.log('handle galeria ha fallado')
-        }
-    }
-
-    devolverURLImagenUser = async (nombreFoto) => {
-        // console.log('Foto en devolver URL'+nombreFoto)
-        const storageRef = ref(storage, `users/${nombreFoto}`);
-        try {
-            getDownloadURL(storageRef)
-                .then((URLImagen) => {
-
-                    // console.log('la URL que devuelve la funcion'+URLImagen)
-                    this.setState({ ImagenUser: URLImagen })
-                    // console.log(this.state.ImagenUser)
-                    //    console.log('LA URL OBTENIDA ES: '+URLImagen)
-                    // return(URLImagen)
-                })
-                .catch((error) => {
-                    // this.setState({ImagenUser: null});
-
-                    console.error('Error al obtener la URL de descarga:', error);
-                });
-=======
         console.log('resultado en el handle: '+Image)
         
         if ( !Image.canceled){
@@ -478,20 +304,13 @@ class Login extends React.Component {
             
                 console.error('Error al obtener la URL de descarga:', error);
             });
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
         } catch (error) {
             console.log('Error al obtener la URL de descarga:', error);
         }
     }
 
-<<<<<<< HEAD
-
-    // guardarImagenEnStorage = async (uri, nombreArchivo) => {
-
-=======
     // guardarImagenEnStorage = async (uri, nombreArchivo) => {
         
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
     //     console.log(nombreArchivo);
     //     console.log(uri)
     //     try {
@@ -516,25 +335,16 @@ class Login extends React.Component {
     render() {
         // const {myFoto} = this.state.ImagenUser;
         if (this.state.user) {
-<<<<<<< HEAD
             console.log('EL USUARIO EN EL RENDER DEL COMPONENTE' + this.state.user.uid)
             this.devolverURLImagenUser(this.state.user.uid)
             // const URLImagen = devolverURLImagenUser (this.state.user.uid)
             // console.log('LA URL EN EL REDER'+URLImagen)
-
-=======
-            console.log('EL USUARIO EN EL RENDER DEL COMPONENTE'+this.state.user.uid)
-            this.devolverURLImagenUser(this.state.user.uid)
-            // const URLImagen = devolverURLImagenUser (this.state.user.uid)
-            // console.log('LA URL EN EL REDER'+URLImagen)
            
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
             return (
                 <View >
                     <Card>
                         {/* <Text style={styles.logintext}> Bienvenido {this.state.user.email} !</Text> */}
                         <Card.Title>Bienvenido {this.state.user.email} !</Card.Title>
-<<<<<<< HEAD
                         <Card.Divider />
                         <View style={styles.vistaCard}>
                             <Text>Nombre de usuario: {this.state.user.email} </Text>
@@ -554,8 +364,7 @@ class Login extends React.Component {
                                 onPress={() => this.handleGaleria()}>
                                 <Text>Añadir imagen de perfil</Text>
                             </Pressable>*/}
-
-=======
+                        </View>
                         <Card.Divider/>
                         <View  style={styles.vistaCard}>
                             <Text>Nombre de usuario: {this.state.user.email} </Text>
@@ -575,7 +384,6 @@ class Login extends React.Component {
                                         <Text>Añadir imagen de perfil</Text>
                                     </Pressable> */}
                               
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
                             <Button style={styles.logout}
                                 onPress={() => auth.signOut().then(() => {
                                     console.log("SignOut OK");

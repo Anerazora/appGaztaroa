@@ -6,14 +6,7 @@ import { Rating } from 'react-native-ratings';
 import { connect } from 'react-redux';
 import { postFavorito, postComentario } from '../redux/ActionCreators';
 import { colorGaztaroaOscuro, colorGaztaroaClaro } from '../comun/comun';
-<<<<<<< HEAD
-import * as MailComposer from 'expo-mail-composer';
 import * as Calendar from 'expo-calendar';
-
-
-=======
-import * as Calendar from 'expo-calendar';
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
 const mapStateToProps = state => {
     return {
         actividades: state.actividades,
@@ -296,14 +289,9 @@ class DetalleExcursion extends Component {
     };
 
     render() {
-<<<<<<< HEAD
-        //const { excursionId } = this.props.route.params;
-        const { excursionId, excursionFecha, excursionNombre } = this.props.route.params;
-=======
         const { excursionId , excursionFecha, excursionNombre} = this.props.route.params;
         // console.log(excursionFecha)
         // console.log(excursionFecha.ano)
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
         const comentarios = Object.keys(this.props.comentarios.comentarios)
             .map(key => this.props.comentarios.comentarios[key])
             .filter(comment => comment.excursionId == excursionId)
@@ -314,12 +302,7 @@ class DetalleExcursion extends Component {
                     favorita={this.props.favoritos.favoritos.some(el => el === excursionId)}
                     onPress={() => this.marcarFavorito(excursionId)}
                     onPressComentario={() => this.toggleModal()}
-<<<<<<< HEAD
-                    //onPressApuntate={() => this.toggleModal2()}
-                    onPressApuntate={() => this.toggleModal2(excursionFecha, excursionNombre)}
-=======
                     onPressApuntate = { () => this.toggleModal2(excursionFecha, excursionNombre)}
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
                 />
                 <RenderComentario
                     comentarios={comentarios}
@@ -402,14 +385,8 @@ class DetalleExcursion extends Component {
                             <Text style={styles.textoBotonModal}>CANCELAR</Text>
                         </Pressable>
 
-<<<<<<< HEAD
-                        <Pressable style={styles.botonModal}
-                            //onPress={() => { this.toggleModal2(); this.resetModal2() }}
-                            onPress={() => this.crearEventoYApuntarse(excursionFecha, excursionNombre)}
-=======
                         <Pressable style= {styles.botonModal}
                          onPress={() => this.crearEventoYApuntarse(excursionFecha, excursionNombre)}
->>>>>>> c38880f63d7178fcaeb8bff4e83436a10537aa6f
                         >
                             <Text style={styles.textoBotonModal}>ACEPTAR Y AÑADIR AL CALENDARIO</Text>
                         </Pressable>
